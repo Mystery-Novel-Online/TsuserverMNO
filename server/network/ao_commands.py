@@ -142,8 +142,10 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
                 # Placeholder
                 client.packet_handler = clients.DefaultDROProtocol()
             elif release >= 1:
-                if major >= 7:
+                if major >= 8:
                     client.packet_handler = clients.DefaultDROProtocol()
+                elif major >= 7:
+                    client.packet_handler = clients.ClientDRO1d7d0()
                 elif major >= 6:
                     client.packet_handler = clients.ClientDRO1d6d0()
                 elif major >= 5:
@@ -193,7 +195,7 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
                         'noencryption', 'deskmod', 'evidence', 'cccc_ic_support', 'looping_sfx',
                         'additive', 'effects', 'y_offset',
                         # DRO exclusive stuff
-                        'ackMS', 'showname', 'chrini', 'charscheck', 'v110', 'outfits' ]
+                        'ackMS', 'showname', 'chrini', 'charscheck', 'v110', 'outfits', 'sequence' ]
     })
 
     client.send_command_dict('client_version', {
