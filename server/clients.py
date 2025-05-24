@@ -229,6 +229,7 @@ class DefaultDROProtocol():
         ('offset_v', ArgType.INT),  # 19
         ('offset_s', ArgType.INT),  # 20 
         ('keyframe_sequence', ArgType.STR_OR_EMPTY), #21
+        ('sprite_layers', ArgType.STR_OR_EMPTY), 
     ]
 
     MS_OUTBOUND = [
@@ -255,6 +256,7 @@ class DefaultDROProtocol():
         ('offset_v', 0),  # 20
         ('offset_s', 1000),  # 21
         ('keyframe_sequence', ''), #22
+        ('sprite_layers', ''),
     ]
     
     CHRINI_INBOUND = [
