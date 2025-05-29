@@ -422,8 +422,14 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
             return
 
     if 'offset_v' in pargs:
+        client.offset_pair = pargs['offset_h']
         client.scale = pargs['offset_s']
         client.vertical = pargs['offset_v']
+
+    if 'keyframe_sequence' in pargs:
+        client.anim_sequence = pargs['keyframe_sequence']
+        client.sprite_layers = pargs['sprite_layers']
+
 
     # Make sure the areas are ok with this
     try:
@@ -459,6 +465,8 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
                 pair_jsn_packet['data']['self_offset'] = client.offset_pair
                 pair_jsn_packet['data']['pair_vertical'] = target.vertical
                 pair_jsn_packet['data']['pair_scale'] = target.scale
+                pair_jsn_packet['data']['sequence'] = target.anim_sequence
+                pair_jsn_packet['data']['layers'] = target.sprite_layers
 
                 json_data = json.dumps(pair_jsn_packet)
                 client.area.send_command_dict('JSN', {
@@ -1030,15 +1038,7 @@ def net_cmd_poff(client: ClientManager.Client, pargs: Dict[str, Any]):
     POFF#<offset:int>#%
 
     """
-    if pargs['pair_offset'] < 0 :
-        client.offset_pair = 0
-        return
-
-    if pargs['pair_offset'] > 960: 
-        client.offset_pair = 960
-        return
-    
-    client.offset_pair = pargs['pair_offset']
+    return
 
 def net_cmd_pr(client: ClientManager.Client, pargs: Dict[str, Any]):
     """ Pair Request

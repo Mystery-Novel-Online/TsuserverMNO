@@ -83,6 +83,8 @@ class ClientManager:
             self.scale = 1000
             self.vertical = 0
             self.showname = ''
+            self.sprite_layers = ''
+            self.anim_sequence = ''
             self.joined = time.time()
             self.last_active = Constants.get_time()
             self.viewing_hubs = False
@@ -1046,6 +1048,8 @@ class ClientManager:
             self.char_folder = new_char
             self.char_outfit = ''
             self.char_showname = ''
+            self.sprite_layers = ''
+            self.anim_sequence = ''
             self.pos = 'wit'
             self.scale = 1000
             self.vertical = 0
