@@ -342,4 +342,6 @@ class AOProtocol(asyncio.Protocol):
                        needs_auth=False),  # pair offset
         'PAIR': _command(function=ao_commands.net_cmd_pair,
                        needs_auth=False),  # Pair
+        'PAIRL': _command(function=ao_commands.net_cmd_pairl,
+                       needs_auth=False),  # Pair
     }

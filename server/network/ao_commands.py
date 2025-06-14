@@ -457,6 +457,7 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
                 pair_jsn_packet = {}
                 pair_jsn_packet['packet'] = 'pair_data'
                 pair_jsn_packet['data'] = {}
+                pair_jsn_packet['data']['is_leader'] = target.pair_owner
                 pair_jsn_packet['data']['last_sprite'] = target.last_sprite
                 pair_jsn_packet['data']['flipped'] = bool(target.flip)
                 pair_jsn_packet['data']['character'] = target.char_folder
@@ -1023,6 +1024,33 @@ def net_cmd_fs(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     client.change_files(pargs['url'])
 
+def net_cmd_pairl(client: ClientManager.Client, pargs: Dict[str, Any]):
+    """ Pair Request
+
+    UPR#<target:int>#%
+
+    """
+
+    layer_offset = pargs['layer_position']
+
+    try:
+        target, _, msg = client.server.client_manager.get_target_public(client, str(client.charid_pair), only_in_area=True)
+    except:
+        client.send_ooc(f'Tried to adjust the rendering order in the pair, but a partner was not found.')
+        return
+
+    if layer_offset == 0:
+        client.pair_owner = False
+        target.pair_owner = True
+        return
+    elif layer_offset == 1:
+        client.pair_owner = True
+        target.pair_owner = False
+        return
+
+    
+
+
 def net_cmd_upr(client: ClientManager.Client, pargs: Dict[str, Any]):
     """ Pair Request
 
@@ -1120,7 +1148,7 @@ def net_cmd_pair(client: ClientManager.Client, pargs: Dict[str, Any]):
     client.offset_pair = 240
     target.offset_pair = 720
 
-    target.pair_owner = False
+    target.pair_owner = True
     client.pair_owner = False
 
     target.change_position(client.pos)
