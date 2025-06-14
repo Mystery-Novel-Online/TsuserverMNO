@@ -228,7 +228,8 @@ class DefaultDROProtocol():
         ('offset_h', ArgType.INT),  # 18
         ('offset_v', ArgType.INT),  # 19
         ('offset_s', ArgType.INT),  # 20 
-        ('keyframe_sequence', ArgType.STR_OR_EMPTY), #21
+        ('outfit_name', ArgType.STR_OR_EMPTY), # 21
+        ('keyframe_sequence', ArgType.STR_OR_EMPTY), #22
         ('sprite_layers', ArgType.STR_OR_EMPTY), 
     ]
 
@@ -255,7 +256,8 @@ class DefaultDROProtocol():
         ('offset_h', 0),  # 19
         ('offset_v', 0),  # 20
         ('offset_s', 1000),  # 21
-        ('keyframe_sequence', ''), #22
+        ('outfit_name', ''), #22
+        ('keyframe_sequence', ''), #23
         ('sprite_layers', ''),
     ]
     
