@@ -123,6 +123,7 @@ class AreaManager(AssetManager):
 
             self.name = parameters['area']
             self.background = parameters['background']
+            self.weather = parameters['weather']
             self.background_tod = parameters['background_tod']
             self.bg_lock = parameters['bglock']
             self.evidence_mod = parameters['evidence_mod']
@@ -587,6 +588,12 @@ class AreaManager(AssetManager):
             """
 
             self.doc = doc
+
+        def broadcast_weather(self):
+            for client in self.clients:
+                client.send_weather()
+
+
 
         def get_evidence_list(self, client: ClientManager.Client):
             """

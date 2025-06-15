@@ -150,6 +150,10 @@ class DefaultDROProtocol():
     PAIRL_INBOUND = [
         ('layer_position', ArgType.INT), 
     ]
+    
+    WEA_OUTBOUND = [
+        ('name', ''),  # 0
+    ]
 
     PR_INBOUND = [
         ('partner_target', ArgType.INT), 

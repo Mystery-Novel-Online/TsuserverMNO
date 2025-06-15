@@ -12491,3 +12491,23 @@ def ooc_cmd_hide_icon(client: ClientManager.Client, arg: str):
         status = {False: 'disabled', True: 'enabled'}
         message = f'You have {status[client.icon_visible]} your character icon.'
     client.send_ooc(message)
+
+
+def ooc_cmd_set_weather(client: ClientManager.Client, arg: str):
+    """
+    Set the weather in an area
+
+    SYNTAX
+    /set_weather <range_start> <range_end> <name>
+    """
+    
+    args = arg.split(' ')
+    
+    range_start, range_end, weather_name = args
+    areas = Constants.parse_two_area_names(client, [range_start, range_end], check_valid_range=True)
+
+
+    for i in range(areas[0].id, areas[1].id+1):
+        area = client.hub.area_manager.get_area_by_id(i)
+        area.weather = weather_name
+        area.broadcast_weather()
