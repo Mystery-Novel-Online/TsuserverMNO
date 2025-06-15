@@ -12511,3 +12511,31 @@ def ooc_cmd_set_weather(client: ClientManager.Client, arg: str):
         area = client.hub.area_manager.get_area_by_id(i)
         area.weather = weather_name
         area.broadcast_weather()
+    
+    client.send_ooc('You have set the weather in the specified areas to `{}`.'.format(weather_name))
+
+def ooc_cmd_zone_weather(client: ClientManager.Client, arg: str):
+    """ (STAFF ONLY)
+
+    SYNTAX
+    /zone_weather <weather_name>
+
+    PARAMETERS
+    <weather_name>: Weather to set in zone
+    """
+
+    try:
+        Constants.assert_command(client, arg, is_staff=True, parameters='>0')
+    except ArgumentError:
+        raise ArgumentError('You must specify a weather name.')
+
+    if not client.zone_watched:
+        raise ZoneError('You are not watching a zone.')
+
+    weather_name = arg
+
+    for zone_area in client.zone_watched.get_areas():
+        zone_area.weather = weather_name
+        zone_area.broadcast_weather()
+
+    client.send_ooc('You have set the weather in your zone to `{}`.'.format(weather_name))
