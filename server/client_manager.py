@@ -253,7 +253,7 @@ class ClientManager:
             pair_jsn_packet['packet'] = 'pair'
             pair_jsn_packet['data'] = {}
             pair_jsn_packet['data']['pair_right'] = int(-1)
-            pair_jsn_packet['data']['offset_left'] = int(0)
+            pair_jsn_packet['data']['offset_left'] = int(500)
             pair_jsn_packet['data']['offset_right'] = int(0)
 
             
