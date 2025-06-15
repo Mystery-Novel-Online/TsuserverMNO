@@ -1040,12 +1040,20 @@ def net_cmd_pairl(client: ClientManager.Client, pargs: Dict[str, Any]):
         return
 
     if layer_offset == 0:
-        client.pair_owner = False
-        target.pair_owner = True
+        if client.pair_owner == target.pair_owner:
+            client.pair_owner = False
+            target.pair_owner = True
+        elif client.pair_owner == True:
+            client.pair_owner = False
+            target.pair_owner = False
         return
     elif layer_offset == 1:
-        client.pair_owner = True
-        target.pair_owner = False
+        if client.pair_owner == target.pair_owner:
+            client.pair_owner = True
+            target.pair_owner = False
+        elif target.pair_owner == True:
+            client.pair_owner = False
+            target.pair_owner = False
         return
 
     
@@ -1148,7 +1156,7 @@ def net_cmd_pair(client: ClientManager.Client, pargs: Dict[str, Any]):
     client.offset_pair = 240
     target.offset_pair = 720
 
-    target.pair_owner = True
+    target.pair_owner = False
     client.pair_owner = False
 
     target.change_position(client.pos)
