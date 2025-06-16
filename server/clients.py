@@ -158,6 +158,7 @@ class DefaultDROProtocol():
 
     WEA_OUTBOUND = [
         ('name', ''),  # 0
+        ('environment_name', 'outdoors'),  # 0
     ]
 
     PR_INBOUND = [

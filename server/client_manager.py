@@ -801,8 +801,12 @@ class ClientManager:
             })
 
         def send_weather(self):
+            weather_environment = "outdoors"
+            if self.area.environment_indoors:
+                weather_environment = "indoors"
             self.send_command_dict('WEA', {
-                'name': self.area.weather
+                'name': self.area.weather,
+                'environment_name': weather_environment,
             })
 
         def send_background(self, name: str = None, pos: str = None,
