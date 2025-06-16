@@ -162,6 +162,8 @@ class ClientManager:
             # Sender stuff
             self.response_key = 'DEFAULT'
 
+
+            self.is_afk = False
             # Pairing stuff
             self.charid_pair = -1
             self.pair_owner = False

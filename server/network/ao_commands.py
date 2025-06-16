@@ -1187,3 +1187,20 @@ def net_cmd_pw(self, _):
     # Well, not empty, there are these comments which makes it not empty
     # but not code is run.
     return
+
+def net_cmd_status(client: ClientManager.Client, pargs: Dict[str, Any]):
+    """ User Status Update
+
+    STATUS#<status_type:int>#<status_value:int>#%
+
+    """
+
+    status_type = pargs['status_type']
+    status_value = pargs['status_value']
+
+    if status_type == 0:
+        client.is_afk = pargs['status_value'] == 1
+        client.send_player_list_to_area()
+
+
+    

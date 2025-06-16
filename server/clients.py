@@ -151,6 +151,11 @@ class DefaultDROProtocol():
         ('layer_position', ArgType.INT), 
     ]
 
+    STATUS_INBOUND = [
+        ('status_type', ArgType.INT), 
+        ('status_value', ArgType.INT), 
+    ]
+
     WEA_OUTBOUND = [
         ('name', ''),  # 0
     ]

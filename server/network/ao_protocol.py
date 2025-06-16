@@ -344,4 +344,6 @@ class AOProtocol(asyncio.Protocol):
                        needs_auth=False),  # Pair
         'PAIRL': _command(function=ao_commands.net_cmd_pairl,
                        needs_auth=False),  # Pair
+        'STATUS': _command(function=ao_commands.net_cmd_status,
+                       needs_auth=False),  # STATUS
     }

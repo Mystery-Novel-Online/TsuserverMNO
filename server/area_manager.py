@@ -263,6 +263,7 @@ class AreaManager(AssetManager):
                             chara_client_info = {}
                             player_stuff.append(str(c.id))
                             chara_client_info["id"] = str(c.id)
+                            chara_client_info["afk"] = str(c.is_afk)
 
                             #Append the Showname
                             ## 1.5
