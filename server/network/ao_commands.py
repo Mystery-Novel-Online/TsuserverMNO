@@ -458,6 +458,7 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
                 pair_jsn_packet['packet'] = 'pair_data'
                 pair_jsn_packet['data'] = {}
                 pair_jsn_packet['data']['is_leader'] = target.pair_owner
+                pair_jsn_packet['data']['outfit'] = target.char_outfit 
                 pair_jsn_packet['data']['last_sprite'] = target.last_sprite
                 pair_jsn_packet['data']['flipped'] = bool(target.flip)
                 pair_jsn_packet['data']['character'] = target.char_folder
