@@ -58,7 +58,7 @@ def ooc_cmd_ambient(client: ClientManager.Client, arg: str):
     Sets the ambient sound effect of the area to `wind.wav`.
     """
 
-    Constants.assert_command(client, arg, is_staff=True, parameters='>0')
+    #Constants.assert_command(client, arg, is_staff=True, parameters='>0')
 
     client.area.ambient = arg
 
