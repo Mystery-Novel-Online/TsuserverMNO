@@ -32,6 +32,7 @@ import json
 import random
 import time
 import typing
+import re
 
 from typing import Any, Callable, Dict, List, Set, Tuple, Union
 
@@ -860,17 +861,34 @@ class AreaManager(AssetManager):
                 info = f'Music names may not reference parent or current directories: {name}'
                 raise ServerError.FileInvalidNameError(info)
 
-            try:
-                name, length, source = client.music_manager.get_music_data(
-                    name)
-            except MusicError.MusicNotFoundError:
+
+            is_url = re.match(r'^https?://', name, re.IGNORECASE)
+
+            name_found = False
+            length, source = -1, ''
+            if is_url:
                 try:
-                    name, length, source = client.hub.music_manager.get_music_data(
-                        name)
+                    name, length, source = client.music_manager.get_music_data(name)
+                    name_found = True
                 except MusicError.MusicNotFoundError:
-                    if raise_if_not_found:
-                        raise
-                    length, source = -1, ''
+                    try:
+                        name, length, source = client.hub.music_manager.get_music_data(name)
+                        name_found = True
+                    except MusicError.MusicNotFoundError:
+                        pass
+                if not name_found and not client.is_staff():
+                    raise MusicError.MusicNotFoundError(f"You are unauthorized for streaming music.")
+            else:
+                try:
+                    name, length, source = client.music_manager.get_music_data(name)
+                    name_found = True
+                except MusicError.MusicNotFoundError:
+                    try:
+                        name, length, source = client.hub.music_manager.get_music_data(name)
+                        name_found = True
+                    except MusicError.MusicNotFoundError:
+                        if raise_if_not_found:
+                            raise
 
             if 'name' not in pargs:
                 pargs['name'] = name
