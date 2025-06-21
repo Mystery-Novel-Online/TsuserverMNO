@@ -1203,5 +1203,15 @@ def net_cmd_status(client: ClientManager.Client, pargs: Dict[str, Any]):
         client.is_afk = pargs['status_value'] == 1
         client.send_player_list_to_area()
 
+    if status_type == 1:
+        target_area = client.area
+        for target in target_area.clients:
+            target.send_command_dict('STATUS', {
+                'user_id': client.id,
+                'status_type': pargs['status_type'],
+                'status_value': pargs['status_value'],
+            })
+
+
 
     

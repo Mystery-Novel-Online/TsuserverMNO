@@ -156,6 +156,12 @@ class DefaultDROProtocol():
         ('status_value', ArgType.INT), 
     ]
 
+    STATUS_OUTBOUND = [
+        ('user_id', ArgType.INT), 
+        ('status_type', ArgType.INT), 
+        ('status_value', ArgType.INT), 
+    ]
+
     WEA_OUTBOUND = [
         ('name', ''),  # 0
         ('environment_name', 'outdoors'),  # 0

@@ -70,7 +70,7 @@ class TsuserverDR:
         self.major_version = 4
         self.minor_version = 2
         self.segment_version = ''
-        self.internal_version = '250615a'
+        self.internal_version = '250621a'
         version_string = self.get_version_string()
         self.software = 'TsuserverDR {}'.format(version_string)
         self.version = 'TsuserverDR {} ({})'.format(version_string, self.internal_version)
