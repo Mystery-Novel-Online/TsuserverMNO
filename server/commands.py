@@ -3626,7 +3626,11 @@ def ooc_cmd_hub(client: ClientManager.Client, arg: str):
         except HubError.ManagerInvalidGameIDError:
             raise HubError.ManagerInvalidGameIDError('Hub not found.')
 
-        client.change_hub(hub, from_party=(client.party is not None))
+        if hub.invite_pass == "":
+            client.change_hub(hub, from_party=(client.party is not None))
+        else:
+            raise HubError.ManagerInvalidGameIDError('Hub not found.')
+
 
 
 def ooc_cmd_hub_create(client: ClientManager.Client, arg: str):
@@ -12542,14 +12546,14 @@ def ooc_cmd_zone_weather(client: ClientManager.Client, arg: str):
     client.send_ooc('You have set the weather in your zone to `{}`.'.format(weather_name))
 
 
-def ooc_cmd_privatize_hub(client: ClientManager.Client, arg: str):
+def ooc_cmd_hub_privatize(client: ClientManager.Client, arg: str):
     Constants.assert_command(client, arg, is_staff=True)
 
     letters = string.ascii_letters + string.digits
     client.hub.invite_pass = ''.join(random.choice(letters) for i in range(6))
     client.send_ooc('You have privatized the hub. The new password is `{}_{}`.'.format(client.hub.get_id()[1:], client.hub.invite_pass))
 
-def ooc_cmd_hub_pass(client: ClientManager.Client, arg: str):
+def ooc_cmd_hub_access(client: ClientManager.Client, arg: str):
     
     args = arg.split('_')
     
@@ -12563,5 +12567,10 @@ def ooc_cmd_hub_pass(client: ClientManager.Client, arg: str):
     if hub.invite_pass != password:
         raise ClientError(f'Password {arg} does not belong to any hubs.')
 
+    if client.ipid in hub.allowed_clients:
+        client.send_ooc('You already have access to the hub `{}`.'.format(hub.get_name()))
+        return
+
     hub.allowed_clients.append(client.ipid)
     client.send_ooc('You have gained access to the hub `{}`.'.format(hub.get_name()))
+    client.change_hub(hub, from_party=(client.party is not None))

@@ -359,15 +359,6 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
         client.disconnect()
         return
 
-    now = time.time()
-
-    client.timing_ic = [t for t in client.timing_ic if now - t <= 1.0]
-    client.timing_ic.append(now)
-
-    if(len(client.timing_ic) > 5):
-        client.disconnect()
-        return
-
     if client.is_muted:  # Checks to see if the client has been muted by a mod
         client.send_ooc("You have been muted by a moderator.")
         return
@@ -377,7 +368,6 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
         return
     if not client.area.can_send_message():
         return
-
     # Trim out any leading/trailing whitespace characters up to a chain of spaces
     pargs['text'] = Constants.trim_extra_whitespace(pargs['text'])
     # Check if after all of this, the message is empty. If so, ignore
@@ -632,6 +622,17 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
             pargs['charid_pair'] = -1
             pargs['offset_pair'] = 0
             pargs['charid_pair_pair_order'] = -1
+
+
+    now = time.time()
+
+    client.timing_ic = [t for t in client.timing_ic if now - t <= 1.0]
+    client.timing_ic.append(now)
+
+    if(len(client.timing_ic) > 4):
+        client.disconnect()
+        return
+        
 
     client.publish_inbound_command('MS_final', pargs)
 
