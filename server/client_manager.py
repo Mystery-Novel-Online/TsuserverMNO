@@ -108,12 +108,23 @@ class ClientManager:
             self.is_cm = False
             self.is_muted = False
             self.is_ooc_muted = False
+            self.is_shadow = False
+            self.shadow_time = 0
+            self.shadow_count = 0
+            self.shadow_next = 30
+
             self.pm_mute = False
             self.mod_call_time = 0
             self.evi_list = []
             self.muted_adverts = False
             self.muted_global = False
             self.pm_mute = False
+
+            self.timing_ooc = []
+            self.timing_ic = []
+            self.timing_global = []
+            self.global_msg_last = ""
+
 
             self.autopass = False
             self.disemvowel = False
@@ -1748,6 +1759,10 @@ class ClientManager:
             msg = '=== Hubs ==='
             for i, hub in self.hub.manager.get_managee_numerical_ids_to_managees().items():
                 name = hub.get_name()
+
+                if hub.invite_pass:
+                    continue 
+
                 if not name:
                     name = hub.get_id()
                 msg += '\r\nHub {}: {}'.format(i, name)

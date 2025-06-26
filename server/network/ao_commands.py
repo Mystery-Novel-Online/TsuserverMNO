@@ -28,6 +28,9 @@ import re
 import time
 import typing
 import json
+import time
+import unicodedata
+
 from typing import Any, Dict
 
 from server import clients, logger
@@ -41,6 +44,8 @@ if typing.TYPE_CHECKING:
     # Avoid circular referencing
     from server.client_manager import ClientManager
 
+def text_is_illegal(text: str) -> bool:
+    return any(unicodedata.combining(c) for c in text)
 
 def net_cmd_hi(client: ClientManager.Client, pargs: Dict[str, Any]):
     """ Handshake.
@@ -349,6 +354,19 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
     Refer to the implementation for details.
 
     """
+
+    if text_is_illegal(pargs['text']):
+        client.disconnect()
+        return
+
+    now = time.time()
+
+    client.timing_ic = [t for t in client.timing_ic if now - t <= 1.0]
+    client.timing_ic.append(now)
+
+    if(len(client.timing_ic) > 5):
+        client.disconnect()
+        return
 
     if client.is_muted:  # Checks to see if the client has been muted by a mod
         client.send_ooc("You have been muted by a moderator.")
@@ -686,6 +704,42 @@ def net_cmd_ct(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     """
 
+    if text_is_illegal(pargs['message']) or text_is_illegal(pargs['username']):
+        client.disconnect()
+        return
+
+
+    now = time.time()
+
+    clients = client.get_multiclients()
+
+    for c in clients:
+        c.timing_ooc.append(now)
+
+    client.timing_ooc = [t for t in client.timing_ooc if now - t <= 5]
+
+    if len(client.timing_ooc) > 5:
+        if client.is_shadow:
+            client.shadow_count += 1
+        else:
+            client.shadow_count = 0
+            client.shadow_time = now
+            client.is_shadow = True
+
+
+    if len(client.timing_ooc) > 8:
+        for c in clients:
+            c.disconnect()
+        return
+
+    if client.shadow_count >= 5:
+        client.shadow_time = now
+
+    if client.shadow_count >= 40:
+        for c in clients:
+            c.disconnect()
+        return
+
     username, message = pargs['username'], pargs['message']
 
     # Trim out any leading/trailing whitespace characters up to a chain of spaces
@@ -711,6 +765,16 @@ def net_cmd_ct(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     # After this the name is validated
     client.name = username
+
+    if client.is_shadow:
+        if now - client.shadow_time >= client.shadow_next: 
+            client.is_shadow = False
+            client.shadow_next += 30
+            client.shadow_count = 0
+            client.timing_ooc = []
+        else:
+            client.send_ooc(message, username=client.name)
+            return
 
     if message.startswith('/'):
         spl = message[1:].split(' ', 1)

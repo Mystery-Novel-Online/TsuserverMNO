@@ -590,7 +590,15 @@ class TsuserverDR:
         if as_mod:
             ooc_name += '[M]'
         ooc_name_ipid = f'{ooc_name}[{client.ipid}]'
-        targets = [c for c in self.get_clients() if condition(c)]
+
+        if client.is_mod:
+            targets = [c for c in self.get_clients() if condition(c)]
+        else:
+            if client.hub.get_id() == "H0":
+                client.send_ooc("Global chat is not avaliable in the lobby hub.")
+                return
+            targets = [c for c in client.hub.get_players() if condition(c)] 
+
         for c in targets:
             if c.is_officer():
                 c.send_ooc(msg, username=ooc_name_ipid)

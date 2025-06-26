@@ -2940,6 +2940,7 @@ def ooc_cmd_g(client: ClientManager.Client, arg: str):
         raise ClientError('You have the global chat muted.')
 
     client.server.broadcast_global(client, arg)
+
     logger.log_server('[{}][{}][GLOBAL]{}.'
                       .format(client.area.id, client.get_char_name(), arg), client)
 
@@ -12539,3 +12540,28 @@ def ooc_cmd_zone_weather(client: ClientManager.Client, arg: str):
         zone_area.broadcast_weather()
 
     client.send_ooc('You have set the weather in your zone to `{}`.'.format(weather_name))
+
+
+def ooc_cmd_privatize_hub(client: ClientManager.Client, arg: str):
+    Constants.assert_command(client, arg, is_staff=True)
+
+    letters = string.ascii_letters + string.digits
+    client.hub.invite_pass = ''.join(random.choice(letters) for i in range(6))
+    client.send_ooc('You have privatized the hub. The new password is `{}_{}`.'.format(client.hub.get_id()[1:], client.hub.invite_pass))
+
+def ooc_cmd_hub_pass(client: ClientManager.Client, arg: str):
+    
+    args = arg.split('_')
+    
+    hub_id, password = args
+
+    try:
+        hub = client.hub.manager.get_managee_by_numerical_id(hub_id)
+    except HubError.ManagerInvalidGameIDError:
+        raise ClientError(f'Password {arg} does not belong to any hubs.')
+
+    if hub.invite_pass != password:
+        raise ClientError(f'Password {arg} does not belong to any hubs.')
+
+    hub.allowed_clients.append(client.ipid)
+    client.send_ooc('You have gained access to the hub `{}`.'.format(hub.get_name()))
