@@ -1907,6 +1907,8 @@ class _Hub(_HubTrivialInherited):
         self.manager: HubManager  # Setting for typing
         self.invite_pass = ""
         self.allowed_clients = []
+        self.allow_global = True
+        self.allow_streaming = False
 
     def get_type_name(self) -> str:
         """

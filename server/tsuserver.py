@@ -595,8 +595,8 @@ class TsuserverDR:
         if client.is_mod:
             targets = [c for c in self.get_clients() if condition(c)]
         else:
-            if client.hub.get_id() == "H0":
-                client.send_ooc("Global chat is not avaliable in the lobby hub.")
+            if not client.hub.allow_global:
+                client.send_ooc("Global chat is not avaliable in the current hub.")
                 return
             targets = [c for c in client.hub.get_players() if condition(c)] 
 

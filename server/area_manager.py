@@ -877,7 +877,8 @@ class AreaManager(AssetManager):
                     except MusicError.MusicNotFoundError:
                         pass
                 if not name_found and not client.is_staff():
-                    raise MusicError.MusicNotFoundError(f"You are unauthorized for streaming music.")
+                    if not client.hub.allow_streaming:
+                        raise MusicError.MusicNotFoundError(f"You are unauthorized for streaming music.")
             else:
                 try:
                     name, length, source = client.music_manager.get_music_data(name)

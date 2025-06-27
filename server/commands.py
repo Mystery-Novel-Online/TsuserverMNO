@@ -12574,3 +12574,17 @@ def ooc_cmd_hub_access(client: ClientManager.Client, arg: str):
     hub.allowed_clients.append(client.ipid)
     client.send_ooc('You have gained access to the hub `{}`.'.format(hub.get_name()))
     client.change_hub(hub, from_party=(client.party is not None))
+
+def ooc_cmd_hub_toggle_streaming(client: ClientManager.Client, arg: str):
+    Constants.assert_command(client, arg, is_staff=True)
+
+    client.hub.allow_streaming = not client.hub.allow_streaming
+    status = 'enabled' if client.hub.allow_streaming else 'disabled'
+    client.send_ooc(f'You have {status} music streaming in the hub.')
+
+def ooc_cmd_hub_toggle_global(client: ClientManager.Client, arg: str):
+    Constants.assert_command(client, arg, is_staff=True)
+
+    client.hub.allow_global = not client.hub.allow_global
+    status = 'enabled' if client.hub.allow_global else 'disabled'
+    client.send_ooc(f'You have {status} hub wide global chat.')
