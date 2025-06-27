@@ -112,6 +112,7 @@ class TsuserverDR:
         self.commands = importlib.import_module('server.commands')
         self.commands_alt = importlib.import_module('server.commands_alt')
         self.logger_handlers = logger.setup_logger(debug=self.config['debug'])
+        self.client_check_enabled = self.config['strict_client_check']
 
         logger.log_print('Server configurations loaded successfully!')
 

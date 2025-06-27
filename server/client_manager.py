@@ -101,6 +101,7 @@ class ClientManager:
 
             self.area = hub.area_manager.default_area()
             self.new_area = self.area  # It is different from self.area in transition to a new area
+            self.incoming_msg_id = 34
             self.party = None
             self.is_mod = False
             self.is_gm = False

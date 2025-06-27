@@ -91,7 +91,7 @@ def ooc_cmd_ambient_end(client: ClientManager.Client, arg: str):
     Clears the ambient sound effect of the area.
     """
 
-    Constants.assert_command(client, arg, is_staff=True, parameters='=0')
+    ##Constants.assert_command(client, arg, is_staff=True, parameters='=0')
 
     if not client.area.ambient:
         raise ClientError(

@@ -47,6 +47,7 @@ class DefaultDROProtocol():
 
     DECRYPTOR_OUTBOUND = [
         ('key', 34),  # 0
+        ('last_msg_id', 0)
     ]
 
     HI_INBOUND = [
@@ -413,6 +414,11 @@ class DefaultDROProtocol():
 class ClientDRO1d7d0(DefaultDROProtocol):
     VERSION_TO_SEND = [1, 7, 0]
 
+    DECRYPTOR_OUTBOUND = [
+        ('key', 34),  # 0,  # 0
+        ('last_msg_id', 0)
+    ]
+    
     MS_OUTBOUND = [
         ('msg_type', 0),  # 0
         ('pre', '-'),  # 1

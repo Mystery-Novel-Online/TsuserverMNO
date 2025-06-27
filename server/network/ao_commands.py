@@ -125,12 +125,26 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
         if pargs['client_software'] not in ['DRO', 'AO2']:
             return False
 
-        release = int(version_list[0])
-        major = int(version_list[1])
+        versionBase = client.incoming_msg_id
+        if client.incoming_msg_id == -1:
+            versionBase = 0
+
+        base_str = str(abs(versionBase)).zfill(6)
+        
+        try:
+            releaseBase = int(base_str[3])
+            majorBase = int(base_str[1])
+            minorBase = int(base_str[5])
+        except IndexError:
+            releaseBase = majorBase = minorBase = 0  # Fallback if not enough digits
+
+
+        release = int(version_list[0]) - releaseBase
+        major = int(version_list[1]) - majorBase
         # Strip out any extra identifiers (like -b1) from minor
         match = re.match(r'(?P<minor>\d+)(?P<rest>.*)', version_list[2])
         if match:
-            minor = int(match['minor'])
+            minor = int(match['minor']) - minorBase
             rest = match['rest']
         else:
             minor = 0
@@ -143,12 +157,12 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
 
         if software == 'DRO':
             if release >= 2:
-                # DRO 2???
-                # Placeholder
-                client.packet_handler = clients.DefaultDROProtocol()
+                return False
             elif release >= 1:
                 if major >= 8:
                     client.packet_handler = clients.DefaultDROProtocol()
+                elif not client.incoming_msg_id == -1:
+                    return False
                 elif major >= 7:
                     client.packet_handler = clients.ClientDRO1d7d0()
                 elif major >= 6:
@@ -322,7 +336,21 @@ def net_cmd_cc(client: ClientManager.Client, pargs: Dict[str, Any]):
     if client.required_packets_received != {'HI', 'ID'}:
         return
 
+    client_id = pargs['client_id']
     char_id = pargs['char_id']
+
+    if not client.incoming_msg_id == -1:
+        versionBase = client.incoming_msg_id
+        base_str = str(abs(versionBase)).zfill(6)
+        try:
+            client_id_real = client_id - 1 - int(base_str[2])
+        except IndexError:
+            client_id_real = 0 
+        
+        if not client_id_real == client.id:
+            client.disconnect()
+            return
+
 
     ever_chose_character_before = client.ever_chose_character  # Store for later
     try:
