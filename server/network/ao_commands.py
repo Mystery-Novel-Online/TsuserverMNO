@@ -1247,8 +1247,8 @@ def net_cmd_pair(client: ClientManager.Client, pargs: Dict[str, Any]):
     target.charid_pair = client.id
     client.charid_pair = target_id
 
-    client.offset_pair = 240
-    target.offset_pair = 720
+    client.offset_pair = 250
+    target.offset_pair = 750
 
     target.pair_owner = False
     client.pair_owner = False
