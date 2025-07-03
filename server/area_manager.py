@@ -815,7 +815,7 @@ class AreaManager(AssetManager):
 
         def play_track(self, name: str, client: ClientManager.Client,
                        raise_if_not_found: bool = False, reveal_sneaked: bool = False,
-                       force_same_restart: int = 1, fade_option: FadeOption = FadeOption.NO_FADE,
+                       force_same_restart: int = 1, fade_option: FadeOption = FadeOption.SMOOTH_PLAY,
                        pargs: Dict[str, Any] = None):
             """
             Play a music track in an area.

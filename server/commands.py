@@ -11974,7 +11974,7 @@ def ooc_cmd_zone_play(client: ClientManager.Client, arg: str):
         raise ZoneError('You are not watching a zone.')
 
     track_name = arg
-    fade_option = FadeOption.NO_FADE
+    fade_option = FadeOption.SMOOTH_PLAY
 
     try:
         arg_list = arg.split()

@@ -63,15 +63,15 @@ FADE_MIX: A combination of FadeIn and FadeOut.
 
 
 class FadeOption(IntEnum):
-    NO_FADE = 0
-    FADE_IN = 1
-    FADE_OUT = 2
+    SMOOTH_PLAY = 0
+    INSTANT_PLAY = 1
+    SYNC_PLAY = 2
     FADE_MIX = 3
 
     # aliases
-    IN = FADE_IN
-    OUT = FADE_OUT
-    MIX = FADE_MIX
+    SMOOTH = SMOOTH_PLAY
+    INSTANT = INSTANT_PLAY
+    SYNC = SYNC_PLAY
 
     @staticmethod
     def from_str(in_str: str):
