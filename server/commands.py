@@ -7328,7 +7328,7 @@ def ooc_cmd_play(client: ClientManager.Client, arg: str):
                           f'{Constants.time_format(delay)}.')
 
     track_name = arg
-    fade_option = FadeOption.NO_FADE
+    fade_option = FadeOption.SMOOTH_PLAY
 
     try:
         arg_list = arg.split()
@@ -8019,7 +8019,7 @@ def ooc_cmd_rplay(client: ClientManager.Client, arg: str):
              for reachable_area_name in client.area.visible_areas}
 
     track_name = arg
-    fade_option = FadeOption.NO_FADE
+    fade_option = FadeOption.SMOOTH_PLAY
 
     try:
         arg_list = arg.split()
