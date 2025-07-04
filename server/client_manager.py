@@ -83,6 +83,8 @@ class ClientManager:
             self.scale = 1000
             self.vertical = 0
             self.showname = ''
+            self.sprite_layers = ''
+            self.anim_sequence = ''
             self.joined = time.time()
             self.last_active = Constants.get_time()
             self.viewing_hubs = False
@@ -99,6 +101,7 @@ class ClientManager:
 
             self.area = hub.area_manager.default_area()
             self.new_area = self.area  # It is different from self.area in transition to a new area
+            self.incoming_msg_id = 34
             self.party = None
             self.is_mod = False
             self.is_gm = False
@@ -106,12 +109,23 @@ class ClientManager:
             self.is_cm = False
             self.is_muted = False
             self.is_ooc_muted = False
+            self.is_shadow = False
+            self.shadow_time = 0
+            self.shadow_count = 0
+            self.shadow_next = 30
+
             self.pm_mute = False
             self.mod_call_time = 0
             self.evi_list = []
             self.muted_adverts = False
             self.muted_global = False
             self.pm_mute = False
+
+            self.timing_ooc = []
+            self.timing_ic = []
+            self.timing_global = []
+            self.global_msg_last = ""
+
 
             self.autopass = False
             self.disemvowel = False
@@ -160,6 +174,8 @@ class ClientManager:
             # Sender stuff
             self.response_key = 'DEFAULT'
 
+
+            self.is_afk = False
             # Pairing stuff
             self.charid_pair = -1
             self.pair_owner = False
@@ -251,7 +267,7 @@ class ClientManager:
             pair_jsn_packet['packet'] = 'pair'
             pair_jsn_packet['data'] = {}
             pair_jsn_packet['data']['pair_right'] = int(-1)
-            pair_jsn_packet['data']['offset_left'] = int(0)
+            pair_jsn_packet['data']['offset_left'] = int(500)
             pair_jsn_packet['data']['offset_right'] = int(0)
 
             
@@ -796,6 +812,15 @@ class ClientManager:
                 'chars_ao2_list': characters,
             })
 
+        def send_weather(self):
+            weather_environment = "outdoors"
+            if self.area.environment_indoors:
+                weather_environment = "indoors"
+            self.send_command_dict('WEA', {
+                'name': self.area.weather,
+                'environment_name': weather_environment,
+            })
+
         def send_background(self, name: str = None, pos: str = None,
                             tod_backgrounds: Dict[str, str] = None):
             """
@@ -833,6 +858,7 @@ class ClientManager:
                 'pos': pos,
                 'tod_backgrounds_ao2_list': tod_backgrounds_ao2_list,
             })
+            self.send_weather()
 
         def send_evidence_list(self):
             self.send_command_dict('LE', {
@@ -1046,6 +1072,8 @@ class ClientManager:
             self.char_folder = new_char
             self.char_outfit = ''
             self.char_showname = ''
+            self.sprite_layers = ''
+            self.anim_sequence = ''
             self.pos = 'wit'
             self.scale = 1000
             self.vertical = 0
@@ -1732,6 +1760,10 @@ class ClientManager:
             msg = '=== Hubs ==='
             for i, hub in self.hub.manager.get_managee_numerical_ids_to_managees().items():
                 name = hub.get_name()
+
+                if hub.invite_pass:
+                    continue 
+
                 if not name:
                     name = hub.get_id()
                 msg += '\r\nHub {}: {}'.format(i, name)

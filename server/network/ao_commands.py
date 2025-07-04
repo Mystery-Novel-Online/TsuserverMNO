@@ -28,6 +28,9 @@ import re
 import time
 import typing
 import json
+import time
+import unicodedata
+
 from typing import Any, Dict
 
 from server import clients, logger
@@ -41,6 +44,8 @@ if typing.TYPE_CHECKING:
     # Avoid circular referencing
     from server.client_manager import ClientManager
 
+def text_is_illegal(text: str) -> bool:
+    return any(unicodedata.combining(c) for c in text)
 
 def net_cmd_hi(client: ClientManager.Client, pargs: Dict[str, Any]):
     """ Handshake.
@@ -120,12 +125,26 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
         if pargs['client_software'] not in ['DRO', 'AO2']:
             return False
 
-        release = int(version_list[0])
-        major = int(version_list[1])
+        versionBase = client.incoming_msg_id
+        if client.incoming_msg_id == -1:
+            versionBase = 0
+
+        base_str = str(abs(versionBase)).zfill(6)
+        
+        try:
+            releaseBase = int(base_str[3])
+            majorBase = int(base_str[1])
+            minorBase = int(base_str[5])
+        except IndexError:
+            releaseBase = majorBase = minorBase = 0  # Fallback if not enough digits
+
+
+        release = int(version_list[0]) - releaseBase
+        major = int(version_list[1]) - majorBase
         # Strip out any extra identifiers (like -b1) from minor
         match = re.match(r'(?P<minor>\d+)(?P<rest>.*)', version_list[2])
         if match:
-            minor = int(match['minor'])
+            minor = int(match['minor']) - minorBase
             rest = match['rest']
         else:
             minor = 0
@@ -138,12 +157,14 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
 
         if software == 'DRO':
             if release >= 2:
-                # DRO 2???
-                # Placeholder
-                client.packet_handler = clients.DefaultDROProtocol()
+                return False
             elif release >= 1:
-                if major >= 7:
+                if major >= 8:
                     client.packet_handler = clients.DefaultDROProtocol()
+                elif not client.incoming_msg_id == -1:
+                    return False
+                elif major >= 7:
+                    client.packet_handler = clients.ClientDRO1d7d0()
                 elif major >= 6:
                     client.packet_handler = clients.ClientDRO1d6d0()
                 elif major >= 5:
@@ -193,7 +214,7 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
                         'noencryption', 'deskmod', 'evidence', 'cccc_ic_support', 'looping_sfx',
                         'additive', 'effects', 'y_offset',
                         # DRO exclusive stuff
-                        'ackMS', 'showname', 'chrini', 'charscheck', 'v110', 'outfits' ]
+                        'ackMS', 'showname', 'chrini', 'charscheck', 'v110', 'outfits', 'sequence' ]
     })
 
     client.send_command_dict('client_version', {
@@ -315,7 +336,21 @@ def net_cmd_cc(client: ClientManager.Client, pargs: Dict[str, Any]):
     if client.required_packets_received != {'HI', 'ID'}:
         return
 
+    client_id = pargs['client_id']
     char_id = pargs['char_id']
+
+    if not client.incoming_msg_id == -1:
+        versionBase = client.incoming_msg_id
+        base_str = str(abs(versionBase)).zfill(6)
+        try:
+            client_id_real = client_id - 1 - int(base_str[2])
+        except IndexError:
+            client_id_real = 0 
+        
+        if not client_id_real == client.id:
+            client.disconnect()
+            return
+
 
     ever_chose_character_before = client.ever_chose_character  # Store for later
     try:
@@ -348,6 +383,10 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     """
 
+    if text_is_illegal(pargs['text']):
+        client.disconnect()
+        return
+
     if client.is_muted:  # Checks to see if the client has been muted by a mod
         client.send_ooc("You have been muted by a moderator.")
         return
@@ -357,7 +396,6 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
         return
     if not client.area.can_send_message():
         return
-
     # Trim out any leading/trailing whitespace characters up to a chain of spaces
     pargs['text'] = Constants.trim_extra_whitespace(pargs['text'])
     # Check if after all of this, the message is empty. If so, ignore
@@ -420,8 +458,14 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
             return
 
     if 'offset_v' in pargs:
+        client.offset_pair = pargs['offset_h']
         client.scale = pargs['offset_s']
         client.vertical = pargs['offset_v']
+
+    if 'keyframe_sequence' in pargs:
+        client.anim_sequence = pargs['keyframe_sequence']
+        client.sprite_layers = pargs['sprite_layers']
+
 
     # Make sure the areas are ok with this
     try:
@@ -449,6 +493,8 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
                 pair_jsn_packet = {}
                 pair_jsn_packet['packet'] = 'pair_data'
                 pair_jsn_packet['data'] = {}
+                pair_jsn_packet['data']['is_leader'] = target.pair_owner
+                pair_jsn_packet['data']['outfit'] = target.char_outfit 
                 pair_jsn_packet['data']['last_sprite'] = target.last_sprite
                 pair_jsn_packet['data']['flipped'] = bool(target.flip)
                 pair_jsn_packet['data']['character'] = target.char_folder
@@ -457,6 +503,8 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
                 pair_jsn_packet['data']['self_offset'] = client.offset_pair
                 pair_jsn_packet['data']['pair_vertical'] = target.vertical
                 pair_jsn_packet['data']['pair_scale'] = target.scale
+                pair_jsn_packet['data']['sequence'] = target.anim_sequence
+                pair_jsn_packet['data']['layers'] = target.sprite_layers
 
                 json_data = json.dumps(pair_jsn_packet)
                 client.area.send_command_dict('JSN', {
@@ -603,6 +651,17 @@ def net_cmd_ms(client: ClientManager.Client, pargs: Dict[str, Any]):
             pargs['offset_pair'] = 0
             pargs['charid_pair_pair_order'] = -1
 
+
+    now = time.time()
+
+    client.timing_ic = [t for t in client.timing_ic if now - t <= 1.0]
+    client.timing_ic.append(now)
+
+    if(len(client.timing_ic) > 4):
+        client.disconnect()
+        return
+        
+
     client.publish_inbound_command('MS_final', pargs)
 
     for area_id in area_range:
@@ -674,6 +733,42 @@ def net_cmd_ct(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     """
 
+    if text_is_illegal(pargs['message']) or text_is_illegal(pargs['username']):
+        client.disconnect()
+        return
+
+
+    now = time.time()
+
+    clients = client.get_multiclients()
+
+    for c in clients:
+        c.timing_ooc.append(now)
+
+    client.timing_ooc = [t for t in client.timing_ooc if now - t <= 5]
+
+    if len(client.timing_ooc) > 5:
+        if client.is_shadow:
+            client.shadow_count += 1
+        else:
+            client.shadow_count = 0
+            client.shadow_time = now
+            client.is_shadow = True
+
+
+    if len(client.timing_ooc) > 8:
+        for c in clients:
+            c.disconnect()
+        return
+
+    if client.shadow_count >= 5:
+        client.shadow_time = now
+
+    if client.shadow_count >= 40:
+        for c in clients:
+            c.disconnect()
+        return
+
     username, message = pargs['username'], pargs['message']
 
     # Trim out any leading/trailing whitespace characters up to a chain of spaces
@@ -699,6 +794,16 @@ def net_cmd_ct(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     # After this the name is validated
     client.name = username
+
+    if client.is_shadow:
+        if now - client.shadow_time >= client.shadow_next: 
+            client.is_shadow = False
+            client.shadow_next += 30
+            client.shadow_count = 0
+            client.timing_ooc = []
+        else:
+            client.send_ooc(message, username=client.name)
+            return
 
     if message.startswith('/'):
         spl = message[1:].split(' ', 1)
@@ -1013,6 +1118,41 @@ def net_cmd_fs(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     client.change_files(pargs['url'])
 
+def net_cmd_pairl(client: ClientManager.Client, pargs: Dict[str, Any]):
+    """ Pair Request
+
+    UPR#<target:int>#%
+
+    """
+
+    layer_offset = pargs['layer_position']
+
+    try:
+        target, _, msg = client.server.client_manager.get_target_public(client, str(client.charid_pair), only_in_area=True)
+    except:
+        client.send_ooc(f'Tried to adjust the rendering order in the pair, but a partner was not found.')
+        return
+
+    if layer_offset == 0:
+        if client.pair_owner == target.pair_owner:
+            client.pair_owner = False
+            target.pair_owner = True
+        elif client.pair_owner == True:
+            client.pair_owner = False
+            target.pair_owner = False
+        return
+    elif layer_offset == 1:
+        if client.pair_owner == target.pair_owner:
+            client.pair_owner = True
+            target.pair_owner = False
+        elif target.pair_owner == True:
+            client.pair_owner = False
+            target.pair_owner = False
+        return
+
+    
+
+
 def net_cmd_upr(client: ClientManager.Client, pargs: Dict[str, Any]):
     """ Pair Request
 
@@ -1028,15 +1168,7 @@ def net_cmd_poff(client: ClientManager.Client, pargs: Dict[str, Any]):
     POFF#<offset:int>#%
 
     """
-    if pargs['pair_offset'] < 0 :
-        client.offset_pair = 0
-        return
-
-    if pargs['pair_offset'] > 960: 
-        client.offset_pair = 960
-        return
-    
-    client.offset_pair = pargs['pair_offset']
+    return
 
 def net_cmd_pr(client: ClientManager.Client, pargs: Dict[str, Any]):
     """ Pair Request
@@ -1115,8 +1247,8 @@ def net_cmd_pair(client: ClientManager.Client, pargs: Dict[str, Any]):
     target.charid_pair = client.id
     client.charid_pair = target_id
 
-    client.offset_pair = 240
-    target.offset_pair = 720
+    client.offset_pair = 250
+    target.offset_pair = 750
 
     target.pair_owner = False
     client.pair_owner = False
@@ -1149,3 +1281,30 @@ def net_cmd_pw(self, _):
     # Well, not empty, there are these comments which makes it not empty
     # but not code is run.
     return
+
+def net_cmd_status(client: ClientManager.Client, pargs: Dict[str, Any]):
+    """ User Status Update
+
+    STATUS#<status_type:int>#<status_value:int>#%
+
+    """
+
+    status_type = pargs['status_type']
+    status_value = pargs['status_value']
+
+    if status_type == 0:
+        client.is_afk = pargs['status_value'] == 1
+        client.send_player_list_to_area()
+
+    if status_type == 1:
+        target_area = client.area
+        for target in target_area.clients:
+            target.send_command_dict('STATUS', {
+                'user_id': client.id,
+                'status_type': pargs['status_type'],
+                'status_value': pargs['status_value'],
+            })
+
+
+
+    

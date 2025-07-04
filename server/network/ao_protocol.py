@@ -26,6 +26,7 @@ from __future__ import annotations
 
 import asyncio
 import typing
+import random
 from collections import namedtuple
 from typing import List
 
@@ -84,7 +85,10 @@ class AOProtocol(asyncio.Protocol):
             return
 
         fantacrypt_key = 34  # just fantacrypt things
-        self.client.send_command_dict('decryptor', {'key': fantacrypt_key})
+        self.client.incoming_msg_id = -1
+        if self.server.config['strict_client_check']:
+            self.client.incoming_msg_id = random.randint(100000, 999999)
+        self.client.send_command_dict('decryptor', {'key': fantacrypt_key, 'last_msg_id' : self.client.incoming_msg_id})
 
     def connection_lost(self, exc):
         """ User disconnected
@@ -342,4 +346,8 @@ class AOProtocol(asyncio.Protocol):
                        needs_auth=False),  # pair offset
         'PAIR': _command(function=ao_commands.net_cmd_pair,
                        needs_auth=False),  # Pair
+        'PAIRL': _command(function=ao_commands.net_cmd_pairl,
+                       needs_auth=False),  # Pair
+        'STATUS': _command(function=ao_commands.net_cmd_status,
+                       needs_auth=False),  # STATUS
     }

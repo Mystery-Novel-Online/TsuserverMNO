@@ -32,6 +32,7 @@ import json
 import random
 import time
 import typing
+import re
 
 from typing import Any, Callable, Dict, List, Set, Tuple, Union
 
@@ -123,6 +124,8 @@ class AreaManager(AssetManager):
 
             self.name = parameters['area']
             self.background = parameters['background']
+            self.weather = parameters['weather']
+            self.environment_indoors = parameters['environment_indoors']
             self.background_tod = parameters['background_tod']
             self.bg_lock = parameters['bglock']
             self.evidence_mod = parameters['evidence_mod']
@@ -262,6 +265,7 @@ class AreaManager(AssetManager):
                             chara_client_info = {}
                             player_stuff.append(str(c.id))
                             chara_client_info["id"] = str(c.id)
+                            chara_client_info["afk"] = str(c.is_afk)
 
                             #Append the Showname
                             ## 1.5
@@ -588,6 +592,12 @@ class AreaManager(AssetManager):
 
             self.doc = doc
 
+        def broadcast_weather(self):
+            for client in self.clients:
+                client.send_weather()
+
+
+
         def get_evidence_list(self, client: ClientManager.Client):
             """
             Obtain the evidence list for a client.
@@ -805,7 +815,7 @@ class AreaManager(AssetManager):
 
         def play_track(self, name: str, client: ClientManager.Client,
                        raise_if_not_found: bool = False, reveal_sneaked: bool = False,
-                       force_same_restart: int = 1, fade_option: FadeOption = FadeOption.NO_FADE,
+                       force_same_restart: int = 1, fade_option: FadeOption = FadeOption.SMOOTH_PLAY,
                        pargs: Dict[str, Any] = None):
             """
             Play a music track in an area.
@@ -851,17 +861,35 @@ class AreaManager(AssetManager):
                 info = f'Music names may not reference parent or current directories: {name}'
                 raise ServerError.FileInvalidNameError(info)
 
-            try:
-                name, length, source = client.music_manager.get_music_data(
-                    name)
-            except MusicError.MusicNotFoundError:
+
+            is_url = re.match(r'^https?://', name, re.IGNORECASE)
+
+            name_found = False
+            length, source = -1, ''
+            if is_url:
                 try:
-                    name, length, source = client.hub.music_manager.get_music_data(
-                        name)
+                    name, length, source = client.music_manager.get_music_data(name)
+                    name_found = True
                 except MusicError.MusicNotFoundError:
-                    if raise_if_not_found:
-                        raise
-                    length, source = -1, ''
+                    try:
+                        name, length, source = client.hub.music_manager.get_music_data(name)
+                        name_found = True
+                    except MusicError.MusicNotFoundError:
+                        pass
+                if not name_found and not client.is_staff():
+                    if not client.hub.allow_streaming:
+                        raise MusicError.MusicNotFoundError(f"You are unauthorized for streaming music.")
+            else:
+                try:
+                    name, length, source = client.music_manager.get_music_data(name)
+                    name_found = True
+                except MusicError.MusicNotFoundError:
+                    try:
+                        name, length, source = client.hub.music_manager.get_music_data(name)
+                        name_found = True
+                    except MusicError.MusicNotFoundError:
+                        if raise_if_not_found:
+                            raise
 
             if 'name' not in pargs:
                 pargs['name'] = name

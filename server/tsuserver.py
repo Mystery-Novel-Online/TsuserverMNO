@@ -68,9 +68,9 @@ class TsuserverDR:
 
         self.release = 5
         self.major_version = 4
-        self.minor_version = 1
+        self.minor_version = 2
         self.segment_version = ''
-        self.internal_version = '250423a'
+        self.internal_version = '250628a'
         version_string = self.get_version_string()
         self.software = 'TsuserverDR {}'.format(version_string)
         self.version = 'TsuserverDR {} ({})'.format(version_string, self.internal_version)
@@ -112,6 +112,7 @@ class TsuserverDR:
         self.commands = importlib.import_module('server.commands')
         self.commands_alt = importlib.import_module('server.commands_alt')
         self.logger_handlers = logger.setup_logger(debug=self.config['debug'])
+        self.client_check_enabled = self.config['strict_client_check']
 
         logger.log_print('Server configurations loaded successfully!')
 
@@ -590,7 +591,15 @@ class TsuserverDR:
         if as_mod:
             ooc_name += '[M]'
         ooc_name_ipid = f'{ooc_name}[{client.ipid}]'
-        targets = [c for c in self.get_clients() if condition(c)]
+
+        if client.is_mod:
+            targets = [c for c in self.get_clients() if condition(c)]
+        else:
+            if not client.hub.allow_global:
+                client.send_ooc("Global chat is not avaliable in the current hub.")
+                return
+            targets = [c for c in client.hub.get_players() if condition(c)] 
+
         for c in targets:
             if c.is_officer():
                 c.send_ooc(msg, username=ooc_name_ipid)
