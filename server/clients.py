@@ -168,6 +168,16 @@ class DefaultDROProtocol():
         ('environment_name', 'outdoors'),  # 0
     ]
 
+    INVES_OUTBOUND = [
+        ('enc_text', ArgType.STR), 
+    ]
+
+    SCENE_OUTBOUND = [
+        ('area_name', ArgType.STR), 
+        ('bg_image', ArgType.STR), 
+        ('map', ArgType.STR), 
+    ]
+
     PR_INBOUND = [
         ('partner_target', ArgType.INT), 
     ]

@@ -55,6 +55,8 @@ class ValidateAreas(Validate):
             'private_area': False,
             'environment_indoors': False,
             'weather': '',
+            'investigation': '',
+            'map_visual': 'None',
             'reachable_areas': '<ALL>',
             'visible_areas': '<REACHABLE_AREAS>',
             'restricted_chars': '',
