@@ -224,7 +224,7 @@ class ValidateAreas(Validate):
             if reachable_areas == {'<ALL>'}:
                 reachable_areas = temp_area_names.copy()
 
-            if visible_areas == {'ALL'}:
+            if visible_areas == {'<ALL>'}:
                 visible_areas = temp_area_names.copy()
             elif visible_areas == {'<REACHABLE_AREAS>'}:
                 visible_areas = reachable_areas.copy()
