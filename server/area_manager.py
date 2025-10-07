@@ -274,6 +274,10 @@ class AreaManager(AssetManager):
                             player_stuff.append(str(c.showname_else_char_showname))
                             chara_client_info["showname"] = str(c.showname_else_char_showname)
 
+                            
+                            if c.discord_id is not None:
+                                chara_client_info["discord"] = str(c.discord_id)
+
                             ## 1.5.1
                             
 
