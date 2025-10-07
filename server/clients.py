@@ -53,6 +53,7 @@ class DefaultDROProtocol():
 
     HI_INBOUND = [
         ('client_hdid', ArgType.STR),  # 0
+        ('access_code', ArgType.STR),  # 0
     ]
 
     BD_OUTBOUND = [

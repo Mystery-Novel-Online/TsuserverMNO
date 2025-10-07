@@ -30,6 +30,7 @@ import typing
 import json
 import time
 import unicodedata
+import requests
 
 from typing import Any, Dict
 
@@ -61,6 +62,42 @@ def net_cmd_hi(client: ClientManager.Client, pargs: Dict[str, Any]):
         return
     # One of two conditions to allow joining
     client.required_packets_received.add('HI')
+
+
+    if(client.server.config['use_masterserver']):
+        access_key = pargs.get('access_code')
+        if access_key:
+            verify_url = url = f"{client.server.config['workshop_ip'].rstrip('/')}/api/servers/verify"
+            payload = {
+                "access_code": access_key,
+                "server_id": client.server.ms_client._server_id
+            }
+
+            try:
+                response = requests.post(verify_url, json=payload, timeout=5)
+                if response.status_code == 200:
+                    try:
+                        data = response.json()
+                        discord_id = data.get("discord_id")
+                        
+                        if discord_id is not None:
+                            client.discord_id = discord_id
+                        logger.log_server(f"Access key verified: {data}", client)
+                    except ValueError:
+                        logger.log_server("Access key verification returned invalid JSON.", client)
+                else:
+                    logger.log_server(
+                        f"Access key verification failed ({response.status_code}): {response.text}", client)
+                    client.disconnect()
+                    return
+            except Exception as e:
+                logger.log_server(f"Error verifying access key: {e}", client)
+                client.disconnect()
+                return
+        else:
+            logger.log_server("No access_key provided in handshake.", client)
+            client.disconnect()
+            return
 
     # Record new HDID and IPID if needed
     client.hdid = pargs['client_hdid']
