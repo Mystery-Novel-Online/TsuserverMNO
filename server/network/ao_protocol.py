@@ -88,7 +88,7 @@ class AOProtocol(asyncio.Protocol):
         self.client.incoming_msg_id = -1
         if self.server.config['strict_client_check']:
             self.client.incoming_msg_id = random.randint(100000, 999999)
-        self.client.send_command_dict('decryptor', {'key': fantacrypt_key, 'last_msg_id' : self.client.incoming_msg_id})
+        self.client.send_command_dict('decryptor', {'key': fantacrypt_key, 'last_msg_id' : self.client.incoming_msg_id, 'server_id' : self.server.ms_client._server_id if self.server.ms_client else -1})
 
     def connection_lost(self, exc):
         """ User disconnected

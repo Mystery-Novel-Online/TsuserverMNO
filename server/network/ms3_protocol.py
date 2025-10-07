@@ -109,7 +109,12 @@ class MasterServerClient():
         try:
             async with self._session.post(url, json=content) as response:
                 j = await response.json(content_type=None)
-                return response.ok, j
+                if response.ok:
+                    if isinstance(j, dict) and 'id' in j:
+                        self._server_id = j['id']
+                    return True, j
+                else:
+                    return False, j
         except Exception as ex:  # pylint: disable=broad-except
             return False, {"local": ex}
 

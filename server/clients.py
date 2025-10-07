@@ -32,7 +32,7 @@ class DefaultDROProtocol():
     def __eq__(self, other):
         return type(self).__name__ == type(other).__name__
 
-    VERSION_TO_SEND = [1, 8, 0]
+    VERSION_TO_SEND = [1, 9, 0]
 
     HAS_CLIENTSIDE_MUSIC_LOOPING = True
     HAS_DISTINCT_AREA_AND_MUSIC_LIST_OUTGOING_PACKETS = True
@@ -47,7 +47,8 @@ class DefaultDROProtocol():
 
     DECRYPTOR_OUTBOUND = [
         ('key', 34),  # 0
-        ('last_msg_id', 0)
+        ('last_msg_id', 0),  # 0
+        ('server_id', -1)
     ]
 
     HI_INBOUND = [
@@ -486,7 +487,8 @@ class ClientDRO1d7d0(DefaultDROProtocol):
 
     DECRYPTOR_OUTBOUND = [
         ('key', 34),  # 0,  # 0
-        ('last_msg_id', 0)
+        ('last_msg_id', 0),  # 0
+        ('server_id', -1)
     ]
     
     MS_OUTBOUND = [
