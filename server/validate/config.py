@@ -47,6 +47,7 @@ class ValidateConfig(Validate):
             'masterserver_name',
             'masterserver_description',
             'masterserver_ip',
+            'workshop_ip',
 
             'announce_areas',
             'motd',
@@ -119,6 +120,7 @@ class ValidateConfig(Validate):
             'masterserver_name': str,
             'masterserver_description': str,
             'masterserver_ip': str,
+            'workshop_ip': str,
 
             'announce_areas': bool,
             'motd': str,

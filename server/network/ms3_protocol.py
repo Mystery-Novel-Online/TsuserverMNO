@@ -56,6 +56,7 @@ class MasterServerClient():
         self._session: aiohttp.ClientSession = None
 
         self._ms_ip: str = self.server.config['masterserver_ip']
+        self._ws_ip: str = self.server.config['workshop_ip']
         self._own_port: int = self.server.config['port']
         self._own_name: str = self.server.config['masterserver_name']
         self._own_description: str = self.server.config['masterserver_description']
@@ -104,8 +105,9 @@ class MasterServerClient():
               is what the error was.
         """
 
+        url = f"{self._ws_ip.rstrip('/')}/api/servers/create"
         try:
-            async with self._session.post(self._ms_ip, json=content) as response:
+            async with self._session.post(url, json=content) as response:
                 j = await response.json(content_type=None)
                 return response.ok, j
         except Exception as ex:  # pylint: disable=broad-except
