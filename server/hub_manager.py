@@ -1906,6 +1906,7 @@ class _Hub(_HubTrivialInherited):
 
         self.manager: HubManager  # Setting for typing
         self.invite_pass = ""
+        self.is_temporary = False
         self.allowed_clients = []
         self.allow_global = True
         self.allow_streaming = False

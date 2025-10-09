@@ -1035,6 +1035,11 @@ class ClientChangeArea:
             client.send_ooc(mes, is_zstaff_flex=old_area)
             client.send_ooc_others(mes, is_zstaff_flex=old_area, in_hub=old_area.hub)
 
+
+        
+        if old_area and old_area.hub.is_temporary and not old_area.clients:
+            client.hub.manager.delete_managee(old_area.hub)
+
         if area.id not in client.remembered_locked_passages:
             client.remembered_locked_passages[area.id] = set()
 

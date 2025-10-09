@@ -3631,7 +3631,50 @@ def ooc_cmd_hub(client: ClientManager.Client, arg: str):
         else:
             raise HubError.ManagerInvalidGameIDError('Hub not found.')
 
+def ooc_cmd_hub_temporary_create(client: ClientManager.Client, arg: str):
+    """ 
+    Creates a temporary hub that will self destruct once everyone leaves.
+    The numerical ID of the hub will be the lowest non-taken numerical hub ID.
 
+    SYNTAX
+    /hub_temporary_create {name}
+
+    PARAMETERS
+    None
+
+    OPTIONAL PARAMETERS
+    {name}: Name of the hub
+
+    EXAMPLES
+    Assuming that two hubs with numerical IDs 0 and 2 respectively exist...
+    >>> /hub_temporary_create
+    Creates hub with numerical ID 1.
+    >>> /hub_temporary_create hubby hub
+    Creates hub with numerical ID 3 and name "hubby hub".
+    """
+
+    hub = client.hub.manager.new_managee()
+    if arg:
+        hub.set_name(arg)
+
+    client.send_music_list_view()
+
+    letters = string.ascii_letters + string.digits
+    hub.invite_pass = ''.join(random.choice(letters) for i in range(6))
+    hub.is_temporary = True
+
+    hub.allowed_clients.append(client.ipid)
+    client.change_hub(hub, from_party=(client.party is not None))
+
+    if arg:
+        client.send_ooc(
+            f'You created temporary hub {hub.get_numerical_id()} with name {hub.get_name()}.\nThe access code is `{hub.get_id()[1:]}_{hub.invite_pass}`.\n\nYour login password is {hub.get_password()}. Only share this with people you trust.')
+        client.send_ooc_others(f'{client.name} [{client.id}] created temporary hub {hub.get_numerical_id()} '
+                               f'with name {hub.get_name()}.', is_officer=True, in_hub=None)
+    else:
+        client.send_ooc(f'You created temporary hub {hub.get_numerical_id()}.\nThe access code is `{hub.get_id()[1:]}_{hub.invite_pass}`.\n\nYour GM login password is {hub.get_password()}. Only share this with people you trust.')
+        client.send_ooc_others(f'{client.name} [{client.id}] created temporary hub {hub.get_numerical_id()}.',
+                               is_officer=True, in_hub=None)
 
 def ooc_cmd_hub_create(client: ClientManager.Client, arg: str):
     """ (OFFICER ONLY)
