@@ -46,7 +46,7 @@ if typing.TYPE_CHECKING:
     from server.client_manager import ClientManager
 
 def text_is_illegal(text: str) -> bool:
-    return any(unicodedata.combining(c) for c in text)
+    return False
 
 def net_cmd_hi(client: ClientManager.Client, pargs: Dict[str, Any]):
     """ Handshake.
