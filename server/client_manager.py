@@ -2791,8 +2791,8 @@ class ClientManager:
                     if target.char_folder and target.char_folder != char:  # Show iniswap if needed
                         char = '{}/{}'.format(char, target.char_folder)
 
-                    multiple_match_mes += ('\r\n*[{}] {} ({}) (OOC: {})'
-                                           .format(target.id, char, target.showname, target.name))
+                    multiple_match_mes += ('\r\n*[{}] {} ({})'
+                                           .format(target.id, char, target.showname))
         if not valid_targets or len(valid_targets) > 1:
             # If was able to match more than one at some point, return that
             if multiple_match_mes:
