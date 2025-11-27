@@ -1037,7 +1037,7 @@ class ClientChangeArea:
 
 
         
-        if old_area and old_area.hub.is_temporary and not old_area.clients:
+        if old_area and old_area.hub.is_temporary and old_area.hub != area.hub and not old_area.clients:
             client.hub.manager.delete_managee(old_area.hub)
 
         if area.id not in client.remembered_locked_passages:
