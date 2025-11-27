@@ -350,4 +350,6 @@ class AOProtocol(asyncio.Protocol):
                        needs_auth=False),  # Pair
         'STATUS': _command(function=ao_commands.net_cmd_status,
                        needs_auth=False),  # STATUS
+        'YAML_AREA': _command(function=ao_commands.net_cmd_yaml_area,
+                       needs_auth=False),  # STATUS
     }

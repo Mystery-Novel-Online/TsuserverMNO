@@ -159,6 +159,10 @@ class DefaultDROProtocol():
         ('status_value', ArgType.INT), 
     ]
 
+    YAML_AREA_INBOUND = [
+        ('yaml_data', ArgType.STR)
+    ]
+
     STATUS_OUTBOUND = [
         ('user_id', ArgType.INT), 
         ('status_type', ArgType.INT), 
