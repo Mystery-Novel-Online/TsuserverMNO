@@ -1375,7 +1375,7 @@ def net_cmd_yaml_area(client: ClientManager.Client, pargs: Dict[str, Any]):
         client.hub.area_manager.command_list_load(client, yaml_file_name)
 
     except Exception as e:
-        logger.log_server(f"Error downloading YAML: {e}", client)
+        client.send_ooc(e)
 
 
 
