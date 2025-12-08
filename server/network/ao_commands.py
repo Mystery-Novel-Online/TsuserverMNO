@@ -161,7 +161,7 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
             return False
 
         # Such versions include DRO and AO
-        if pargs['client_software'] not in ['DRO', 'AO2']:
+        if pargs['client_software'] not in ['MNN']:
             return False
 
         versionBase = client.incoming_msg_id
@@ -194,49 +194,11 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
         if rest:
             pass
 
-        if software == 'DRO':
+        if software == 'MNN':
             if release >= 2:
-                return False
-            elif release >= 1:
-                if major >= 9:
-                    client.packet_handler = clients.DefaultDROProtocol()
-                elif major >= 8:
-                    client.packet_handler = clients.ClientDRO1d8d0()
-                elif not client.incoming_msg_id == -1:
-                    return False
-                elif major >= 7:
-                    client.packet_handler = clients.ClientDRO1d7d0()
-                elif major >= 6:
-                    client.packet_handler = clients.ClientDRO1d6d0()
-                elif major >= 5:
-                    client.packet_handler = clients.ClientDRO1d5d0()
-                elif major >= 4:
-                    client.packet_handler = clients.ClientDRO1d4d0()
-                elif major >= 3:
-                    client.packet_handler = clients.ClientDRO1d3d0()
-                elif major >= 2:
-                    if minor >= 3:
-                        client.packet_handler = clients.ClientDRO1d2d3()
-                    elif minor >= 2:
-                        client.packet_handler = clients.ClientDRO1d2d2()
-                    elif minor >= 1:
-                        client.packet_handler = clients.ClientDRO1d2d1()
-                    else:
-                        client.packet_handler = clients.ClientDRO1d2d0()
-                elif major >= 1:
-                    client.packet_handler = clients.ClientDRO1d1d0()
-                else:
-                    client.packet_handler = clients.ClientDRO1d0d0()
+                client.packet_handler = clients.DefaultDROProtocol()
             else:
                 return False
-        elif software == 'AO2':  # AO2 protocol
-            if release == 2:
-                if major >= 10:
-                    client.packet_handler = clients.ClientAO2d10()
-                else:
-                    return False  # Unrecognized
-            else:
-                return False  # Unrecognized
         else:
             raise RuntimeError(f'{software}')
 
