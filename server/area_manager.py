@@ -277,12 +277,10 @@ class AreaManager(AssetManager):
                             
                             if c.discord_id is not None:
                                 chara_client_info["discord"] = str(c.discord_id)
-
-                            ## 1.5.1
                             
+                            chara_client_info["content_version"] = str(c.workshop_update)
 
-                            #Append the Character Name
-                            ## 1.5
+
                             if(c.icon_visible):
                                 player_stuff.append(str(c.char_folder))
                                 chara_client_info["character"] = str(c.char_folder)
