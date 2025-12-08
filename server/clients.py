@@ -304,6 +304,7 @@ class DefaultDROProtocol():
         ('actual_folder_name', ArgType.STR),  # 0
         ('actual_character_showname', ArgType.STR),  # 1
         ('character_outfit', ArgType.STR),  # 2
+        ('workshop_update', 0),  # 3
     ]
 
     MC_INBOUND = [
@@ -485,6 +486,12 @@ class ClientDRO1d8d0(DefaultDROProtocol):
         ('outfit_name', ''), #22
         ('keyframe_sequence', ''), #23
         ('sprite_layers', ''),
+    ]
+    
+    CHRINI_INBOUND = [
+        ('actual_folder_name', ArgType.STR),  # 0
+        ('actual_character_showname', ArgType.STR),  # 1
+        ('character_outfit', ArgType.STR),  # 2
     ]
 
 class ClientDRO1d7d0(DefaultDROProtocol):

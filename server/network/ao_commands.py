@@ -377,26 +377,13 @@ def net_cmd_cc(client: ClientManager.Client, pargs: Dict[str, Any]):
     if client.required_packets_received != {'HI', 'ID'}:
         return
 
-    client_id = pargs['client_id']
     char_id = pargs['char_id']
-
-    if not client.incoming_msg_id == -1:
-        versionBase = client.incoming_msg_id
-        base_str = str(abs(versionBase)).zfill(6)
-        try:
-            client_id_real = client_id - 1 - int(base_str[2])
-        except IndexError:
-            client_id_real = 0 
-        
-        if not client_id_real == client.id:
-            client.disconnect()
-            return
-
 
     ever_chose_character_before = client.ever_chose_character  # Store for later
     try:
         client.change_character(char_id)
-    except ClientError:
+    except ClientError as e:
+        logger.log_server(f"Error selecting character: {e}", client)
         return
     client.last_active = Constants.get_time()
 
@@ -1136,6 +1123,7 @@ def net_cmd_chrini(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     client.change_character_ini_details(pargs['actual_folder_name'], pargs['actual_character_showname'])
     client.char_outfit = pargs.get('character_outfit', '')
+    client.workshop_update = pargs.get('workshop_update', 0)
     client.send_player_list_to_area()
 
 
