@@ -79,6 +79,7 @@ class ClientManager:
             self.char_folder = ''
             self.char_outfit = ''
             self.workshop_update = 0
+            self.discord_id = 0
             self.char_showname = ''
             self.pos = 'wit'
             self.scale = 1000
@@ -1079,6 +1080,7 @@ class ClientManager:
             self.char_folder = new_char
             self.char_outfit = ''
             self.workshop_update = 0
+            self.discord_id = 0
             self.char_showname = ''
             self.sprite_layers = ''
             self.anim_sequence = ''

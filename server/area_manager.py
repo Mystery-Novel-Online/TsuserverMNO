@@ -275,7 +275,7 @@ class AreaManager(AssetManager):
                             chara_client_info["showname"] = str(c.showname_else_char_showname)
 
                             
-                            if c.discord_id is not None:
+                            if c.discord_id:
                                 chara_client_info["discord"] = str(c.discord_id)
                             
                             chara_client_info["content_version"] = str(c.workshop_update)
