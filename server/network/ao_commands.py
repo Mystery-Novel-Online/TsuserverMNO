@@ -124,11 +124,17 @@ def net_cmd_hi(client: ClientManager.Client, pargs: Dict[str, Any]):
             return
 
     logger.log_server(f'Connected. HDID: {client.hdid}.', client)
+    
+    client.send_command_dict('FL', {
+        'fl_ao2_list': [ 'outfits', 'sequence', 'tags', 'mnn_init' ]
+    })
+    
     client.send_command_dict('ID', {
         'client_id': client.id,
         'server_software': client.server.software,
         'server_software_version': client.server.get_version_string(),
     })
+
     client.send_command_dict('PN', {
         'player_count': client.server.get_player_count(),
         'player_limit': client.server.config['playerlimit'],
@@ -211,14 +217,6 @@ def net_cmd_id(client: ClientManager.Client, pargs: Dict[str, Any]):
         # Assume a legacy DRO client instruction set.
         client.disconnect()
         return
-
-    client.send_command_dict('FL', {
-        'fl_ao2_list': ['yellowtext', 'customobjections', 'flipping', 'fastloading',
-                        'noencryption', 'deskmod', 'evidence', 'cccc_ic_support', 'looping_sfx',
-                        'additive', 'effects', 'y_offset',
-                        # DRO exclusive stuff
-                        'ackMS', 'showname', 'chrini', 'charscheck', 'v110', 'outfits', 'sequence', 'tags' ]
-    })
 
     client.send_command_dict('client_version', {
         'dro_version_ao2_list': client.packet_handler.VERSION_TO_SEND
