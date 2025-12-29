@@ -124,6 +124,7 @@ class AreaManager(AssetManager):
 
             self.name = parameters['area']
             self.background = parameters['background']
+            self.background_variant = ""
             self.weather = parameters['weather']
             self.map_visual = parameters['map_visual']
             self.investigation = parameters['investigation']
@@ -397,6 +398,7 @@ class AreaManager(AssetManager):
                 raise AreaError('Invalid background name.')
 
             self.background = bg
+            self.background_variant = ""
             for c in self.clients:
                 if c.is_blind and not override_blind:
                     c.send_background(name=self.server.config['blackout_background'])
