@@ -12628,3 +12628,16 @@ def ooc_cmd_hub_toggle_global(client: ClientManager.Client, arg: str):
     client.hub.allow_global = not client.hub.allow_global
     status = 'enabled' if client.hub.allow_global else 'disabled'
     client.send_ooc(f'You have {status} hub wide global chat.')
+
+
+def ooc_cmd_bg_variant(client: ClientManager.Client, arg: str):
+    try:
+        Constants.assert_command(client, arg, parameters='>0')
+    except ArgumentError:
+        raise ArgumentError('You must specify a variant. Use /bg_variant <variant>.')
+    if not client.is_mod and client.area.bg_lock:
+        raise AreaError("This area's background is locked.")
+
+    client.area.change_background_variant(arg, validate=not (client.is_staff() or client.area.cbg_allowed))
+    client.area.broadcast_ooc('{} changed the backgrounds variant to {}.'.format(client.displayname, arg))
+    logger.log_server('[{}][{}]Changed background variant to {}' .format(client.area.id, client.get_char_name(), arg), client)

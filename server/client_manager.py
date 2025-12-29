@@ -853,9 +853,7 @@ class ClientManager:
             if pos is None:
                 pos = self.pos
             if variant is None:
-                variant = ""
-            else:
-                name = f'{name}:{variant}'  
+                variant = self.area.background_variant
             if tod_backgrounds is None:
                 tod_backgrounds = dict()
 
@@ -865,7 +863,7 @@ class ClientManager:
                 tod_backgrounds_ao2_list.append(argument)
 
             self.send_command_dict('BN', {
-                'name': name,
+                'name': f'{name}:{variant}',
                 'pos': pos,
                 'tod_backgrounds_ao2_list': tod_backgrounds_ao2_list,
             })

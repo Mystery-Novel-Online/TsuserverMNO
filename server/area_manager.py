@@ -408,6 +408,16 @@ class AreaManager(AssetManager):
                     c.send_background(name=self.background,
                                       tod_backgrounds=self.get_background_tod())
 
+        def change_background_variant(self, bg: str, validate: bool = True, override_blind: bool = False):
+            self.background_variant = bg
+            for c in self.clients:
+                if c.is_blind and not override_blind:
+                    c.send_background(name=self.server.config['blackout_background'])
+                elif not c.area.lights:
+                    c.send_background(name=self.server.config['blackout_background'])
+                else:
+                    c.send_background(name=self.background, tod_backgrounds=self.get_background_tod(), variant=self.background_variant)
+
         def change_background_tod(self, bg: str, tod: str, validate: bool = True,
                                   override_blind: bool = False):
             """
