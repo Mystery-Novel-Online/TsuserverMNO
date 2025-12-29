@@ -828,7 +828,7 @@ class ClientManager:
                 'environment_name': weather_environment,
             })
 
-        def send_background(self, name: str = None, pos: str = None,
+        def send_background(self, name: str = None, pos: str = None, variant = None,
                             tod_backgrounds: Dict[str, str] = None):
             """
             Send a background packet to a client.
@@ -852,6 +852,10 @@ class ClientManager:
                 name = self.area.background
             if pos is None:
                 pos = self.pos
+            if variant is None:
+                variant = ""
+            else:
+                name = f'{name}:{variant}'  
             if tod_backgrounds is None:
                 tod_backgrounds = dict()
 
