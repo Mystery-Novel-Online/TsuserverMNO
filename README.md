@@ -565,13 +565,12 @@ GMs can:
     - Clears passage locks that start in the areas in the given area range, or just the ones in the current area if not given a range.
 * **passage_restore** "area range start", "area range end"
     - Restores passage locks that start in the areas in the given area range to their original status, or just the ones in the current area if not given a range.
-* **play** "song.extension"[ "fade type"]
+* **play** "song.extension" "playback type"
     - Plays a song, even if not in the server music list.
     - If the song is within some folders within the client music folder, such folders must be included separated by "/" (e.g. "trial/Trial Start.opus" to play "Trial Start.opus" within the "trial" folder of the client music folder).
-    - [OPTIONAL] Fade type determines how the new and previous stopping behavior.
-    * `in`: The new song will fade in as it begins to play.
-    * `out`: The old song will fade out before the new song begins to play.
-    * `mix`: A combination of `in` and `out`.
+    - [OPTIONAL] Playback type determines how the song will transition into the next.
+    * `Sync`: Playback will fade into the new song without resetting the timestamp to the start.
+    * `Instant`: Playback of the song will begin instantly. 
 * **poison** "ID" "initials of effects" "length"
     - Applies a poison to the target that will inflict them in the given length of time in seconds the given effects.
 * **pos_force** "position" "ID"
@@ -582,13 +581,12 @@ GMs can:
     - Reveals a target if they were previously sneaking.
     - Also restores their formerly assigned handicap if they had one that was shorter than the server's automatic sneaking handicap.
     - If no ID is given, target is yourself.
-* **rplay** "song.extension"[ "fade type"]
+* **rplay** "song.extension" "playback type"
     - Plays a song in all areas reachable from the current one.
     - If the song is within some folders within the client music folder, such folders must be included separated by "/" (e.g. "trial/Trial Start.opus" to play "Trial Start.opus" within the "trial" folder of the client music folder).
-    - [OPTIONAL] Fade type determines how the new and previous stopping behavior.
-    * `in`: The new song will fade in as it begins to play.
-    * `out`: The old song will fade out before the new song begins to play.
-    * `mix`: A combination of `in` and `out`.
+    - [OPTIONAL] Playback type determines how the song will transition into the next.
+    * `Sync`: Playback will fade into the new song without resetting the timestamp to the start.
+    * `Instant`: Playback of the song will begin instantly. 
 * **poison** "ID" "initials of effects" "length"
 * **scream_range**
     - Returns the areas that can listen to screams sent from the current area.
