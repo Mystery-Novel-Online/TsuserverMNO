@@ -807,49 +807,7 @@ GMs can:
     - Deletes a zone by its ID, or the zone you are watching if not given a zone.
 
 ### Moderator Commands
-
-* **announce** "message"
-    - Sends a serverwide announcement.
-* **ban** "IPID"/"IP"
-    - Bans the specified IPID/IP (hdid is linked to ipid so all bans happen at the same time).
-* **banhdid** "HDID"
-    - Bans the specified HDID (hdid is linked to ipid so all bans happen at the same time).
-* **bglock**
-    - Toggles the background lock in the current area.
-* **can_iniswap**
-    - Changes the iniswap status in the current area.
-    - Even if iniswap at all is forbidden you can configure all-time allowed iniswaps in *iniswaps.yaml*
-* **charselect** "ID"
-    - Kicks a player back to the character select screen. If no ID was entered then target yourself.
-* **defaultarea** "area number"
-    - Sets the given area to be the area all future players join when they connect to the server.
-* **disemvowel/disemconsonant/remove_h** "ID/IPID"
-    - Removes the respective letters from everything said by the target
-* **gimp** "ID/IPID"
-    - Gimps a target so that all their IC messages are replaced with a selection of preset messages.
-* **gm** "message"
-    - Sends a serverwide message with mod tag.
-* **lights** "on/off" "area 1" "area 2" ...
-    - Changes the light status in the given areas to on or off, or in the current area if not given any; even if the background of the area is locked.
-    - Areas with lights off will have a dark background, and they disable /getarea(s) and alter /autopass, bleeding, /look and sneaking notifications.
-* **lm** "message"
-    - Sends an area OOC message with mod tag.
-* **modlock**
-    - Locks your area. Prevents GMs, CMs and normal users from entering.
-* **showname_freeze**
-    - Changes the ability of non-staff members of being able to change or remove their own shownames.
-* **showname_nuke**
-    - Clears all shownames from non-staff members.
-* **switch** "character name"
-    - Switches you to the given character. If some other player in the area is using it, they will be forced to the character select screen.
-* **unban** "IPID/IP"
-    - Unbans the specified IPID/IP.
-* **unbanhdid** "HDID"
-    - Unbans the specified HDID.
-* **undisemvowel/undisemconsonant/ungimp/unremove_h** "ID/IPID"
-    - Undoes correlating command.
-* **unlock**
-    - Unlocks an area, provided the lock came as a result of /lock or /modlock.
+A list of moderator commands can be found [here](docs/moderator-commands.md).
 
 ### Debug commands
 
