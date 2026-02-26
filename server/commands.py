@@ -9087,23 +9087,23 @@ def ooc_cmd_think(client: ClientManager.Client, arg: str):
 
     msg = arg[:256]
 
-    client.send_ic(msg=msg, pos=client.pos, folder=client.char_folder, char_id=client.char_id,
+    client.send_ic(msg=msg, hide_character=1, pos=client.pos, folder='../../misc/blank', char_id=client.char_id,
                    showname='[T] ' + client.showname_else_char_showname,
-                   bypass_text_replace=True, use_last_received_sprites=True)
+                   bypass_text_replace=True, use_last_received_sprites=False)
     client.send_ooc(f'You thought `{arg}`.')
 
-    client.send_ic_others(msg=msg, pos=client.pos, folder=client.char_folder,
+    client.send_ic_others(msg=msg, hide_character=1, pos=client.pos, folder='../../misc/blank',
                           char_id=client.char_id,
                           showname='[T] ' + client.showname_else_char_showname,
-                          bypass_text_replace=True, use_last_received_sprites=True,
+                          bypass_text_replace=True, use_last_received_sprites=False,
                           is_zstaff_flex=True, in_area=True)
     client.send_ooc_others(f'(X) {client.displayname} [{client.id}] thought `{arg}` '
                            f'({client.area.id}).', is_zstaff_flex=True)
 
-    client.send_ic_others(msg=msg, pos=client.pos, folder=client.char_folder,
+    client.send_ic_others(msg=msg, hide_character=1, pos=client.pos, folder='../../misc/blank',
                           char_id=client.char_id,
                           showname='[T] ' + client.showname_else_char_showname,
-                          bypass_text_replace=True, use_last_received_sprites=True,
+                          bypass_text_replace=True, use_last_received_sprites=False,
                           is_zstaff_flex=False, in_area=True, pred=lambda c: c.is_mindreader)
     client.send_ooc_others(f'(X) {client.displayname} [{client.id}] thought `{arg}` '
                            f'({client.area.id}).',
