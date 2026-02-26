@@ -1353,6 +1353,15 @@ def net_cmd_yaml_music(client: ClientManager.Client, pargs: Dict[str, Any]):
 
         logger.log_server(f"Music YAML saved to {yaml_file_path}", client)
         client.hub.music_manager.command_list_load(client, yaml_file_name)
+        
+        for target in client.hub.get_players():
+            if target.music_manager.is_default_file_loaded():
+                target.send_ooc('As you had no personal music list loaded, you will be shown the hub '
+                            'music list.')
+                target.send_music_list_view()
+            else:
+                target.send_ooc('As you had a personal music list loaded, you will not be shown the '
+                                'hub music list. Display the hub music list by running /music_list.')
 
     except Exception as e:
         client.send_ooc(e)
