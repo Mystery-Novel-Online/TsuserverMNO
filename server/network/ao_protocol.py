@@ -351,5 +351,7 @@ class AOProtocol(asyncio.Protocol):
         'STATUS': _command(function=ao_commands.net_cmd_status,
                        needs_auth=False),  # STATUS
         'YAML_AREA': _command(function=ao_commands.net_cmd_yaml_area,
-                       needs_auth=False),  # STATUS
+                       needs_auth=False),  # YAML_AREA
+        'YAML_MUSIC': _command(function=ao_commands.net_cmd_yaml_music,
+                       needs_auth=False),  # YAML_MUSIC
     }
