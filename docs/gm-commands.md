@@ -42,29 +42,11 @@ GMs can bypass area passages and locks, receive special RP notifications and use
 | `/rplay` | `<song.extension>` `[playback type]` | Plays a song in all areas reachable from the current one. |
 | `/zone_play` | `<song.extension>` `[playback type]` | Plays a track in all areas in the zone you are watching. |
 
-*If the song is within some folders within the client music folder, such folders must be included separated by "/" (e.g. "trial/Trial Start.opus" to play "Trial Start.opus" within the "trial" folder of the client music folder).
+If the song is within some folders within the client music folder, such folders must be included separated by "/" (e.g. "trial/Trial Start.opus" to play "Trial Start.opus" within the "trial" folder of the client music folder).
     
-* **play** "song.extension" "playback type"
-    - 
-    - 
-    - [OPTIONAL] Playback type determines how the song will transition into the next.
-    * `Sync`: Playback will fade into the new song without resetting the timestamp to the start.
-    * `Instant`: Playback of the song will begin instantly. 
-
-* **rplay** "song.extension" "playback type"
-    - 
-    - If the song is within some folders within the client music folder, such folders must be included separated by "/" (e.g. "trial/Trial Start.opus" to play "Trial Start.opus" within the "trial" folder of the client music folder).
-    - [OPTIONAL] Playback type determines how the song will transition into the next.
-    * `Sync`: Playback will fade into the new song without resetting the timestamp to the start.
-    * `Instant`: Playback of the song will begin instantly. 
-
-* **zone_play** 
-    - 
-    - If the song is within some folders within the client music folder, such folders must be included separated by "/" (e.g. "trial/Trial Start.opus" to play "Trial Start.opus" within the "trial" folder of the client music folder).
-    - [OPTIONAL] Fade type determines how the new and previous stopping behavior.
-    * `in`: The new song will fade in as it begins to play.
-    * `out`: The old song will fade out before the new song begins to play.
-    * `mix`: A combination of `in` and `out`.
+Playback type is an optional variable which determines how the song will transition into the next.
+-  `Sync`: Playback will fade into the new song without resetting the timestamp to the start.
+-  `Instant`: Playback of the song will begin instantly. 
 
 ---
 
