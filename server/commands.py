@@ -58,8 +58,6 @@ def ooc_cmd_ambient(client: ClientManager.Client, arg: str):
     Sets the ambient sound effect of the area to `wind.wav`.
     """
 
-    Constants.assert_command(client, arg, is_staff=False, parameters='>0')
-
     client.area.ambient = arg
 
     for target in client.area.clients:
@@ -90,8 +88,6 @@ def ooc_cmd_ambient_end(client: ClientManager.Client, arg: str):
     >>> /ambient_end
     Clears the ambient sound effect of the area.
     """
-
-    Constants.assert_command(client, arg, is_staff=False, parameters='=0')
 
     if not client.area.ambient:
         raise ClientError(
