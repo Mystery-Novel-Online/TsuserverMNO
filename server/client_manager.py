@@ -2258,9 +2258,9 @@ class ClientManager:
             return info
 
         def change_position(self, pos: str = ''):
-            if pos not in ('', 'def', 'pro', 'hld', 'hlp', 'jud', 'wit'):
-                raise ClientError('Invalid position. '
-                                  'Possible values: def, pro, hld, hlp, jud, wit.')
+            #if pos not in ('', 'def', 'pro', 'hld', 'hlp', 'jud', 'wit'):
+            #    raise ClientError('Invalid position. '
+            #                      'Possible values: def, pro, hld, hlp, jud, wit.')
             self.pos = pos
             self.send_command_dict('SP', {
                 'position': self.pos
