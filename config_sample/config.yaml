@@ -23,6 +23,7 @@ use_masterserver: true
 masterserver_name: My First DR Server
 masterserver_description: This is my flashy new DR server
 masterserver_ip: https://servers.aceattorneyonline.com/servers # Keep
+workshop_ip: https://api.mysterynovel.network
 
 # Passwords for different roles
 # modpass: password for moderators
