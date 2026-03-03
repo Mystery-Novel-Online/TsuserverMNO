@@ -105,6 +105,7 @@ class TsuserverDR:
         self.load_commandhelp()
         self.load_ids()
         self.load_gimp()
+        self.host_ip = None
 
         self.ms_client = None
         self.user_auth_req = False
@@ -157,20 +158,20 @@ class TsuserverDR:
         logger.log_pserver('Server started successfully!')
 
         if self.config['local']:
-            host_ip = '127.0.0.1'
+            self.host_ip = '127.0.0.1'
         else:
             try:
-                host_ip = (urllib.request.urlopen('https://api.ipify.org',
+                self.host_ip = (urllib.request.urlopen('https://api.ipify.org',
                                                   context=ssl.SSLContext())
                            .read().decode('utf8'))
             except urllib.error.URLError as ex:
-                host_ip = None
+                self.host_ip = None
                 logger.log_pdebug('Unable to obtain personal IP from https://api.ipify.org\n'
                                   '{}: {}\n'
                                   'Players may be unable to join.'
                                   .format(type(ex).__name__, ex.reason))
-        if host_ip is not None:
-            logger.log_pdebug(f'Server should be now accessible from address {host_ip} and port '
+        if self.host_ip is not None:
+            logger.log_pdebug(f'Server should be now accessible from address {self.host_ip} and port '
                               f'{self.config["port"]}.')
         if not self.config['local']:
             logger.log_pdebug(f'If you want to join your server from this device, you may need to '

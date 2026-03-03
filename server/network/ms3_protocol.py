@@ -75,12 +75,14 @@ class MasterServerClient():
         players = self.server.get_player_count()
         name = self._own_name
         description = self._own_description
+        ip_address = self.server.host_ip
 
         content = {
             "port": port,
             "players": players,
             "name": name,
-            "description": description
+            "description": description,
+            "ip": ip_address
         }
         return content
 
