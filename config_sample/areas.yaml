@@ -10,6 +10,7 @@
 # ----------
 # *area: Name of the area.
 # *background: Default background of the area.
+# *background_variant: Default background variant of the area.
 # *afk_delay: If a positive number, the number of seconds that must pass to mark an inactive player as AFK and kick them to `afk_sendto`. If 0, no such AFK kicks take place.
 # *afk_sendto: The ID of the area to kick an AFK player to.
 # *background_tod: Backgrounds per time of day.
