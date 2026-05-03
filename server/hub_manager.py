@@ -30,6 +30,8 @@ import json
 import secrets
 import typing
 import os
+import uuid
+from pathlib import Path
 
 from server.area_manager import AreaManager
 from server.background_manager import BackgroundManager
@@ -1909,7 +1911,7 @@ class _Hub(_HubTrivialInherited):
 
         self.hub_id = hub_id
         self.manager: HubManager  # Setting for typing
-        self.guid = ""
+        self.guid = uuid.uuid4().hex
         self.invite_pass = ""
         self.is_temporary = False
         self.allowed_clients = []
@@ -1936,7 +1938,7 @@ class _Hub(_HubTrivialInherited):
             "background_list": self.background_manager.get_source_file(),
         }
 
-        with open(f"data/hubs/{self.hub_id}_{super().get_name()}_{self.guid}.json", "w") as f:
+        with open(f"data/hubs/{self.hub_id}_{self.guid}.json", "w") as f:
             json.dump(data, f, indent=4)
 
     def load_from_file(self, hub_file):
@@ -1955,6 +1957,19 @@ class _Hub(_HubTrivialInherited):
             self.load_music(data["music_list"])
             self.load_backgrounds(data["background_list"])
 
+    def delete_hub_file(self):
+        hubs_path = Path("data/hubs")
+
+        for file in hubs_path.glob("*.json"):
+            name = file.stem
+
+            if "_" not in name:
+                continue
+
+            _, guid = name.split("_", 1)
+
+            if guid == self.guid:
+                file.unlink()
 
     def get_type_name(self) -> str:
         """
@@ -2615,6 +2630,7 @@ class _HubManagerTrivialInherited(GameWithAreasManager):
 
         """
 
+        managee.delete_hub_file()
         game_id, game_players = self.unchecked_delete_managee(managee)
         self._check_structure()
         return game_id, game_players
