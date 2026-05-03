@@ -12605,6 +12605,13 @@ def ooc_cmd_hub_privatize(client: ClientManager.Client, arg: str):
     client.hub.invite_pass = ''.join(random.choice(letters) for i in range(6))
     client.send_ooc('You have privatized the hub. The new password is `{}_{}`.'.format(client.hub.get_id()[1:], client.hub.invite_pass))
 
+def ooc_cmd_hub_publicize(client: ClientManager.Client, arg: str):
+    Constants.assert_command(client, arg, is_officer=True)
+
+    client.hub.invite_pass = ''
+    client.hub.owner_id = -1
+    client.send_ooc('You have publicized the hub. It is now accessible to everyone.')
+
 def ooc_cmd_hub_access(client: ClientManager.Client, arg: str):
     
     args = arg.split('_')
