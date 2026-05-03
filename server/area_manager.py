@@ -124,7 +124,7 @@ class AreaManager(AssetManager):
 
             self.name = parameters['area']
             self.background = parameters['background']
-            self.background_variant = ""
+            self.background_variant = parameters['background_variant']
             self.weather = parameters['weather']
             self.map_visual = parameters['map_visual']
             self.investigation = parameters['investigation']

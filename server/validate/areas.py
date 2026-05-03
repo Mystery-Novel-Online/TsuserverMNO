@@ -40,6 +40,7 @@ class ValidateAreas(Validate):
             'afk_delay': 0,
             'afk_sendto': 0,
             'background_tod': dict(),
+            'background_variant': '',
             'bglock': False,
             'bullet': True,
             'cbg_allowed': False,
