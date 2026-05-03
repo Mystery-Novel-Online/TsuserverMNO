@@ -24,6 +24,7 @@
 from __future__ import annotations
 from typing import Any,             Callable, Dict, List, Tuple, Type
 
+from pathlib import Path
 import asyncio
 import errno
 import importlib
@@ -98,6 +99,15 @@ class TsuserverDR:
         self.hub_manager = HubManager(self)
         default_hub = self.hub_manager.new_managee()
         default_hub.set_name('Main')
+
+        hubs_path = Path("data/hubs")
+        hubs_path.mkdir(parents=True, exist_ok=True)
+
+        for file in hubs_path.glob("*.json"):
+            filename = file.stem
+
+            existingHub = self.hub_manager.new_managee()
+            existingHub.load_from_file(filename)
 
         self.ipid_list = {}
         self.hdid_list = {}

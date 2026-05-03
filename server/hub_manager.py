@@ -1936,9 +1936,25 @@ class _Hub(_HubTrivialInherited):
             "background_list": self.background_manager.get_source_file(),
         }
 
-        os.makedirs("data/hubs", exist_ok=True)
         with open(f"data/hubs/{self.hub_id}_{super().get_name()}_{self.guid}.json", "w") as f:
             json.dump(data, f, indent=4)
+
+    def load_from_file(self, hub_file):
+        with open(f"data/hubs/{hub_file}.json") as f:
+            data = json.load(f)
+
+            super().set_name(data["name"])
+            self.allowed_clients = data["allowed_clients"]
+            self.guid = data["guid"]
+            self.invite_pass = data["invite_pass"]
+            self.allow_global = data["allow_global"]
+            self.allow_streaming = data["allow_streaming"]
+
+            self.load_areas(data["area_list"])
+            self.load_characters(data["character_list"])
+            self.load_music(data["music_list"])
+            self.load_backgrounds(data["background_list"])
+
 
     def get_type_name(self) -> str:
         """
