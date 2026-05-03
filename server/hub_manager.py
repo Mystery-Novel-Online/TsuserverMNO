@@ -1937,6 +1937,7 @@ class _Hub(_HubTrivialInherited):
                 "owner": self.owner_id,
                 "invite_pass": self.invite_pass,
                 "allowed_clients": self.allowed_clients,
+                "gm_pass": self.get_password()
             },
             "rules":
             {
@@ -1966,6 +1967,11 @@ class _Hub(_HubTrivialInherited):
             self.invite_pass = security.get("invite_pass", "")
             self.owner_id = security.get("owner", -1)
             self.allowed_clients = security.get("allowed_clients", [])
+            gmPass = security.get("gm_pass", -1)
+            if(gmPass != -1):
+                self.set_password(gmPass)
+
+
 
             self.allow_global = data["rules"]["allow_global"]
             self.allow_streaming = data["rules"]["allow_streaming"]
