@@ -25,8 +25,11 @@ Module that contains the hub manager and hub modules.
 
 from __future__ import annotations
 
+import atexit
+import json
 import secrets
 import typing
+import os
 
 from server.area_manager import AreaManager
 from server.background_manager import BackgroundManager
@@ -1904,12 +1907,38 @@ class _Hub(_HubTrivialInherited):
 
         self._password = str(secrets.randbelow(9000) + 1000)  # Cute trick to get 4-digit number
 
+        self.hub_id = hub_id
         self.manager: HubManager  # Setting for typing
+        self.guid = ""
         self.invite_pass = ""
         self.is_temporary = False
         self.allowed_clients = []
         self.allow_global = True
         self.allow_streaming = False
+
+        atexit.register(self.save_to_file)
+
+
+    def save_to_file(self):
+        if(self.hub_id == "H0"):
+            return
+
+        data = {
+            "name": super().get_name(),
+            "allowed_clients": self.allowed_clients,
+            "guid": self.guid,
+            "invite_pass": self.invite_pass,
+            "allow_global": self.allow_global,
+            "allow_streaming": self.allow_streaming,
+            "area_list": self.area_manager.get_source_file(),
+            "character_list": self.character_manager.get_source_file(),
+            "music_list": self.music_manager.get_source_file(),
+            "background_list": self.background_manager.get_source_file(),
+        }
+
+        os.makedirs("data/hubs", exist_ok=True)
+        with open(f"data/hubs/{self.hub_id}_{super().get_name()}_{self.guid}.json", "w") as f:
+            json.dump(data, f, indent=4)
 
     def get_type_name(self) -> str:
         """
