@@ -1908,7 +1908,7 @@ class _Hub(_HubTrivialInherited):
         self.trial_manager = TrialManager(server)
 
         self._password = str(secrets.randbelow(9000) + 1000)  # Cute trick to get 4-digit number
-
+        self._deleted = False
         self.hub_id = hub_id
         self.manager: HubManager  # Setting for typing
         self.guid = uuid.uuid4().hex
@@ -1922,6 +1922,9 @@ class _Hub(_HubTrivialInherited):
 
 
     def save_to_file(self):
+        if self._deleted:
+            return
+
         if(self.hub_id == "H0"):
             return
 
@@ -1979,6 +1982,8 @@ class _Hub(_HubTrivialInherited):
 
             if guid == self.guid:
                 file.unlink()
+
+        self._deleted = True
 
     def get_type_name(self) -> str:
         """
