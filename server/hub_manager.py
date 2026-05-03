@@ -1927,15 +1927,24 @@ class _Hub(_HubTrivialInherited):
 
         data = {
             "name": super().get_name(),
-            "allowed_clients": self.allowed_clients,
             "guid": self.guid,
-            "invite_pass": self.invite_pass,
-            "allow_global": self.allow_global,
-            "allow_streaming": self.allow_streaming,
-            "area_list": self.area_manager.get_source_file(),
-            "character_list": self.character_manager.get_source_file(),
-            "music_list": self.music_manager.get_source_file(),
-            "background_list": self.background_manager.get_source_file(),
+            "security":
+            {
+                "invite_pass": self.invite_pass,
+                "allowed_clients": self.allowed_clients,
+            },
+            "rules":
+            {
+                "allow_global": self.allow_global,
+                "allow_streaming": self.allow_streaming,
+            },
+            "config_files":
+            {
+                "areas": self.area_manager.get_source_file(),
+                "characters": self.character_manager.get_source_file(),
+                "music": self.music_manager.get_source_file(),
+                "backgrounds": self.background_manager.get_source_file()
+            }
         }
 
         with open(f"data/hubs/{self.hub_id}_{self.guid}.json", "w") as f:
@@ -1946,16 +1955,16 @@ class _Hub(_HubTrivialInherited):
             data = json.load(f)
 
             super().set_name(data["name"])
-            self.allowed_clients = data["allowed_clients"]
             self.guid = data["guid"]
-            self.invite_pass = data["invite_pass"]
-            self.allow_global = data["allow_global"]
-            self.allow_streaming = data["allow_streaming"]
+            self.invite_pass = data["security"]["invite_pass"]
+            self.allowed_clients = data["security"]["allowed_clients"]
+            self.allow_global = data["rules"]["allow_global"]
+            self.allow_streaming = data["rules"]["allow_streaming"]
 
-            self.load_areas(data["area_list"])
-            self.load_characters(data["character_list"])
-            self.load_music(data["music_list"])
-            self.load_backgrounds(data["background_list"])
+            self.load_areas(data["config_files"]["areas"])
+            self.load_characters(data["config_files"]["characters"])
+            self.load_music(data["config_files"]["music"])
+            self.load_backgrounds(data["config_files"]["backgrounds"])
 
     def delete_hub_file(self):
         hubs_path = Path("data/hubs")
