@@ -1964,10 +1964,19 @@ class _Hub(_HubTrivialInherited):
             self.allow_global = data["rules"]["allow_global"]
             self.allow_streaming = data["rules"]["allow_streaming"]
 
-            self.load_areas(data["config_files"]["areas"])
-            self.load_characters(data["config_files"]["characters"])
-            self.load_music(data["config_files"]["music"])
-            self.load_backgrounds(data["config_files"]["backgrounds"])
+            config = data.get("config_files", {})
+
+            if os.path.exists(config.get("areas", "")):
+                self.load_areas(config["areas"])
+
+            if os.path.exists(config.get("characters", "")):
+                self.load_characters(config["characters"])
+
+            if os.path.exists(config.get("music", "")):
+                self.load_music(config["music"])
+
+            if os.path.exists(config.get("backgrounds", "")):
+                self.load_backgrounds(config["backgrounds"])
 
     def delete_hub_file(self):
         hubs_path = Path("data/hubs")
