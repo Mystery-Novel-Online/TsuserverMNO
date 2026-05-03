@@ -3672,6 +3672,54 @@ def ooc_cmd_hub_temporary_create(client: ClientManager.Client, arg: str):
         client.send_ooc_others(f'{client.name} [{client.id}] created temporary hub {hub.get_numerical_id()}.',
                                is_officer=True, in_hub=None)
 
+def ooc_cmd_hub_personal(client: ClientManager.Client, arg: str):
+    """
+    Creates or transports the user to their own persona hub.
+    The numerical ID of the hub will be the lowest non-taken numerical hub ID.
+
+    SYNTAX
+    /hub_personal
+
+    PARAMETERS
+    None
+
+    OPTIONAL PARAMETERS
+    None
+
+    EXAMPLES
+    Assuming that two hubs with numerical IDs 0 and 2 respectively exist...
+    >>> /hub_personal
+    Creates hub with numerical ID 1.
+    """
+
+    user_id = client.discord_id
+    if user_id is 0:
+        user_id = client.hdid
+
+
+    hub = None
+    for i, hub_iterate in client.hub.manager.get_managee_numerical_ids_to_managees().items():
+        if hub_iterate.owner_id == user_id:
+            hub = hub_iterate
+            break
+
+    if hub == None:
+        hub = client.hub.manager.new_managee()
+        hub.owner_id = user_id
+
+        hub.set_name(f'{client.name}\'s Personal Hub')
+
+        letters = string.ascii_letters + string.digits
+        hub.invite_pass = ''.join(random.choice(letters) for i in range(6))
+        hub.is_temporary = False
+        hub.allowed_clients.append(client.ipid)
+
+    client.send_music_list_view()
+    client.change_hub(hub, from_party=(client.party is not None))
+    client.send_ooc(f'You are now in your personal hub {hub.get_numerical_id()}.\nThe access code is `{hub.get_id()[1:]}_{hub.invite_pass}`.\n\nYour GM login password is {hub.get_password()}. Only share this with people you trust. If you wish to make this hub public, please contact a moderator.')
+    client.send_ooc_others(f'{client.name} [{client.id}] created personal hub {hub.get_numerical_id()}.',
+                               is_officer=True, in_hub=None)
+
 def ooc_cmd_hub_create(client: ClientManager.Client, arg: str):
     """ (OFFICER ONLY)
     Creates a new hub with the given name, or with a default generated name if not given one.

@@ -1917,6 +1917,7 @@ class _Hub(_HubTrivialInherited):
         self.allowed_clients = []
         self.allow_global = True
         self.allow_streaming = False
+        self.owner_id = -1
 
         atexit.register(self.save_to_file)
 
@@ -1933,6 +1934,7 @@ class _Hub(_HubTrivialInherited):
             "guid": self.guid,
             "security":
             {
+                "owner": self.owner_id,
                 "invite_pass": self.invite_pass,
                 "allowed_clients": self.allowed_clients,
             },
@@ -1959,8 +1961,12 @@ class _Hub(_HubTrivialInherited):
 
             super().set_name(data["name"])
             self.guid = data["guid"]
-            self.invite_pass = data["security"]["invite_pass"]
-            self.allowed_clients = data["security"]["allowed_clients"]
+
+            security = data.get("security", {})
+            self.invite_pass = security.get("invite_pass", "")
+            self.owner_id = security.get("owner", -1)
+            self.allowed_clients = security.get("allowed_clients", [])
+
             self.allow_global = data["rules"]["allow_global"]
             self.allow_streaming = data["rules"]["allow_streaming"]
 
