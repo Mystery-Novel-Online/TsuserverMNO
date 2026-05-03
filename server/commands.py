@@ -3870,6 +3870,19 @@ def ooc_cmd_hub_password_info(client: ClientManager.Client, arg: str):
     password = hub.get_password()
     client.send_ooc(f'The hub password is `{password}`.')
 
+def ooc_cmd_hub_invite_info(client: ClientManager.Client, arg: str):
+
+    Constants.assert_command(client, arg, is_staff=True)
+
+    if not arg:
+        arg = client.hub.get_numerical_id()
+
+    try:
+        hub = client.hub.manager.get_managee_by_numerical_id(arg)
+    except HubError.ManagerInvalidGameIDError:
+        raise ClientError(f'Hub {arg} not found.')
+
+    client.send_ooc(f'The access code for the hub is `{hub.get_id()[1:]}_{hub.invite_pass}`.')
 
 def ooc_cmd_hub_rename(client: ClientManager.Client, arg: str):
     """ (STAFF ONLY)
