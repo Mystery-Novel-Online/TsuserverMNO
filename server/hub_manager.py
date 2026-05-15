@@ -1963,8 +1963,23 @@ class _Hub(_HubTrivialInherited):
                 "backgrounds": self.background_manager.get_source_file()
             }
         }
+        
+        saveFileName = f"data/hubs/{self.hub_id}_{self.guid}.json"
+        
+        hubs_path = Path("data/hubs")
 
-        with open(f"data/hubs/{self.hub_id}_{self.guid}.json", "w") as f:
+        for file in hubs_path.glob("*.json"):
+            name = file.stem
+
+            if "_" not in name:
+                continue
+
+            _, guid = name.split("_", 1)
+
+            if guid == self.guid:
+                saveFileName = f"data/hubs/{name}.json"
+
+        with open(saveFileName, "w") as f:
             json.dump(data, f, indent=4)
 
     def load_from_file(self, hub_file):
