@@ -24,7 +24,8 @@ Module that contains the hub manager and hub modules.
 """
 
 from __future__ import annotations
-
+import threading
+import time
 import atexit
 import json
 import secrets
@@ -1920,8 +1921,18 @@ class _Hub(_HubTrivialInherited):
         self.owner_id = -1
 
         atexit.register(self.save_to_file)
+        self._autosave_running = True
+        self._autosave_thread = threading.Thread(target=self._autosave_loop, daemon=True)
+        self._autosave_thread.start()
 
-
+    def _autosave_loop(self):
+        while self._autosave_running:
+            time.sleep(30 * 60)  # 30 minutes
+            try:
+                self.save_to_file()
+            except Exception as e:
+                print(f"[Hub Autosave Error] {self.hub_id}: {e}")
+                
     def save_to_file(self):
         if self._deleted:
             return
