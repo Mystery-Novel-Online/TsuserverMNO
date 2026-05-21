@@ -261,7 +261,7 @@ class AreaManager(AssetManager):
             for target_client in self.clients:
                 player_data_to_send = list()
                 player_stuff = list()
-                if self.rp_getarea_allowed and self.lights:
+                if (self.rp_getarea_allowed and self.lights) or target_client.is_staff():
                     for c in self.clients: 
                         
                         if(c != target_client and c.is_visible and c.char_id is not None and c.char_id != -1):
