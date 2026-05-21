@@ -730,33 +730,6 @@ def net_cmd_ct(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     clients = client.get_multiclients()
 
-    for c in clients:
-        c.timing_ooc.append(now)
-
-    client.timing_ooc = [t for t in client.timing_ooc if now - t <= 5]
-
-    if len(client.timing_ooc) > 5:
-        if client.is_shadow:
-            client.shadow_count += 1
-        else:
-            client.shadow_count = 0
-            client.shadow_time = now
-            client.is_shadow = True
-
-
-    if len(client.timing_ooc) > 8:
-        for c in clients:
-            c.disconnect()
-        return
-
-    if client.shadow_count >= 5:
-        client.shadow_time = now
-
-    if client.shadow_count >= 40:
-        for c in clients:
-            c.disconnect()
-        return
-
     username, message = pargs['username'], pargs['message']
 
     # Trim out any leading/trailing whitespace characters up to a chain of spaces
@@ -782,16 +755,6 @@ def net_cmd_ct(client: ClientManager.Client, pargs: Dict[str, Any]):
 
     # After this the name is validated
     client.name = username
-
-    if client.is_shadow:
-        if now - client.shadow_time >= client.shadow_next: 
-            client.is_shadow = False
-            client.shadow_next += 30
-            client.shadow_count = 0
-            client.timing_ooc = []
-        else:
-            client.send_ooc(message, username=client.name)
-            return
 
     if message.startswith('/'):
         spl = message[1:].split(' ', 1)
