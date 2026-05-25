@@ -234,11 +234,13 @@ class MusicManager(AssetManager):
         return new_list.copy()
 
     def get_music_data(self, music: str) -> Tuple[str, int, str]:
+        music_cmp = music.casefold()
+
         for item in self.get_music():
-            if item['category'] == music:
+            if item['category'].casefold() == music_cmp:
                 return item['category'], -1, ''
             for song in item['songs']:
-                if song['name'] == music:
+                if song['name'].casefold() == music_cmp:
                     name = song['name']
                     length = song['length'] if 'length' in song else -1
                     source = song['source'] if 'source' in song else ''
